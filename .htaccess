@@ -1,0 +1,29 @@
+# ============================================================
+# 🔒 CHIPFY — Apache Front Controller Routing
+# ============================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # RewriteBase /wazio/ # Desativado para compatibilidade universal
+
+    # 1. Bloqueia acesso direto a diretórios sensíveis
+    RewriteRule ^(app|core|logs|config\.php|setup\.php|auth\.php) - [F,L]
+
+    # 2. Se o arquivo ou diretório físico não existir...
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # 3. ...envia tudo para o index.php (Front Controller)
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>
+
+# Desativa listagem de pastas
+Options -Indexes
+
+# Headers de Segurança
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
