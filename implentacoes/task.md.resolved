@@ -1,0 +1,149 @@
+# Reorganização da Sidebar e Integração N8N
+
+## 📋 Checklist Concluído
+
+- [x] **Fluxos N8N (Arquitetura)**
+    - [x] Compressão de Vídeo (FFmpeg).
+    - [x] Apoio ao Download de IG, FB, KW, YT
+- [x] Integração Webhook Dashboard -> N8N
+- [x] Criar Fluxo N8N Profissional (Execute Command + FFmpeg)
+- [x] Implementar Worker de Compressão & ZIP (Empacotamento)
+- [x] Desenvolver Super Worker Híbrido (Individual + ZIP Massa)
+- [x] Ajustar Dashboard para download de binários (.zip) do N8N
+- [x] Resolver erros de DNS (net::ERR_NAME_NOT_RESOLVED)
+- [x] Implementar Fallback yt-dlp nativo no PHP (ApiController)
+- [x] **Interface Premium (War Room)**
+    - [x] Layout Dark Green Metálico em todas as sessões.
+    - [x] Sidebar reorganizada por Categorias.
+    - [x] Fusão de "Limpar Hash" e "Metadados" (Segurança Unificada).
+
+- [x] **Integração Backend (Funcional)**
+    - [x] Gateway de Proxy N8N (`n8n_proxy`) centralizado.
+    - [x] Chamadas AJAX reais em todas as ferramentas.
+    - [x] Database com estatísticas em tempo real (JSON usage).
+    - [x] Painel N8N 100% interativo (Testar + Ver JSON).
+
+## 🛠️ Status Final da Sidebar Atômica
+
+- **PAINEL**: Home, Financeiro, Renovações, Configurações, Notificações.
+- **ATENDIMENTO**: Fluxos, Automação, Remarketing, Bloqueador, Clientes.
+- **WHATSAPP**: Contingência, Maturador.
+- **FERRAMENTAS**: Conversor, Compressor, Transcrição.
+- **EDIÇÃO**: Baixar Vídeos, Hash & Meta Dados.
+- **ADMINISTRAÇÃO**: Postgres, Usuários, Logs.
+
+---
+
+## 🚀 Próxima Fase: Motores Audiovisuais
+
+- [x] **Limpar Hash & Metadados (PHP + FFmpeg Deep Spoofing)**
+    - [x] Criar backend PHP local (`api/action=run_ffmpeg`) para contornar limite de API/2GB do N8N.
+    - [x] Múltiplos arquivos (Fila de Drag and Drop).
+    - [x] Conversão p/ Dispositivo Emulado (`Make: Apple`, `Make: Samsung`, Data/GPS randomizada).
+    - [x] Adição de ruído de opacidade 1% para alteração forçada de frames no codec do vídeo.
+    - [x] Download automático/botão a cada finalização no loop 1 a 1 do Frontend.
+
+- [x] **Baixar Vídeos Nativos (N8N Queue)**
+    - [x] Fila múltipla enviando requisições 1 a 1 para o webhook.
+    - [x] Suporte YT, TikTok e Kwai (Opção Baixar Individual vs Baixar em Massa).
+    - [x] Retorno com botão de baixar o MP4 diretamente.
+
+- [x] **Super Inbox (Fase 1: Arquitetura & Integração)**
+    - [x] Mapeamento de Slugs UAZAPI vs ZapData.
+    - [x] Desenvolver Guia Mestre de Fluxos & Chat.
+    - [x] Atualizar Sidebar (Inbox, Fluxos, Kanban).
+    - [x] Implementar Layout [inbox.php](file:///c:/Users/Admin/Downloads/uazapi/app/Views/admin/inbox.php) (Três Colunas).
+    - [x] Implementar Filtros de Etiquetas e Instâncias.
+    - [x] Integrar Histórico Sincronizado (`message/find`).
+    - [x] Implementar Envio de Mensagens (`sender/text`).
+    - [x] **[Novo]** Mini-Checkout in-chat para Boleto/PIX transparente.
+
+- [x] **Flow Builder Gráfico (Fase 3: Editor Visual & Execução)**
+    - [x] Criar Página Estrutural [flow_editor.php](file:///c:/Users/Admin/Downloads/uazapi/app/Views/admin/flow_editor.php).
+    - [x] Implementar Canvas de Desenho (Drag & Drop).
+    - [x] Desenvolver Componentes de Nó (Mensagem, Áudio, Filtro).
+    - [x] **[Novo]** Mapear UI com 20 blocos operacionais do ZapData.
+    - [x] **[Novo]** Adicionar propriedades avançadas em Blocos Lógicos (Filtros de CRM/Tags).
+    - [x] Sistema de Conexão entre Blocos (Edging / SVG).
+    - [x] Integração com Postgres para salvar/carregar JSON.
+    - [x] **Motor de Execução Nativo PHP**:
+        - [x] Criar `FlowInterpreter.php` (State Machine baseada em Graph).
+        - [x] Endpoint Webhook Bypass `api/flow_webhook` finalizado.
+
+- [ ] **Fase 4: Notificações Nativas e Migração SQL**
+    - [x] Atualizar Inbox UI Visual Checks (Visuais do WhatsApp - 1 check, 2 checks lido, horário).
+    - [x] Função "Responder Mensagem Específica" em ChatList/Input.
+    - [x] Adicionar Filtros Avançados de Pagos/Pendentes no Inbox Header.
+    - [x] Desenvolver Painel de Configuração Push Notifications na UI com Banco de Token.
+    - [x] Criar tabelas Postgres e script unificado (`SQL_Migrator.php`).
+    - [x] Refatorar Financeiro para leitura SQL nativa.
+    - [x] Refatorar Contingência (Chips) para leitura SQL nativa.
+    - [x] Tratamento de Erro / Badges na tela de Logs Mestre da Aplicação.
+
+- [x] **Fase 5: Segurança Avançada, SaaS Multi-tenant e PIX/Boleto**
+    - [x] **Escudo Anti-Intrusão (WAF & Client-Side):**
+        - [x] Criar página de "Ponto Cego" (`shield.php` ou `403.php`) para redirecionar atacantes.
+        - [x] Implementar Firewall PHP (Rate Limiting anti-DDoS, bloqueio de SQLi/XSS).
+        - [x] Injetar script Client-Side para bloquear F12, Ctrl+Shift+I, Right-Click e console no Dashboard.
+    - [x] **Arquitetura Multi-Tenant Isolada:**
+        - [x] Restringir visualização de Instâncias e Chats no Inbox/Dashboard apenas para as instâncias alocadas ao Usuário logado.
+        - [x] Impedir acesso via API a instâncias não autorizadas (Validação Backend HTTP 403).
+    - [x] **Integração de Pagamento (Mini-Checkout):**
+        - [x] Criar UI de Mini-Checkout in-chat no Super Inbox (Gerar cobrança no painel direito).
+        - [x] Criar layout de iFrame/Modal Pop-up para o lead preencher dados e enviar ao N8N.
+        - [x] Criar blocos lógicos no Flow Builder para "Gerar PIX" e "Gerar Boleto".
+    - [x] **Renderização de Mídia Rica (Inbox):**
+        - [x] Renderizar balões de Áudio com player customizado (Play/Pause, Barra de Progresso, Velocidade 1x/1.5x/2x).
+        - [x] Renderizar previas de Imagem clicáveis (Lightbox).
+        - [x] Renderizar player de Vídeo embutido.
+        - [x] Renderizar botões interativos (Quick Replies/Call to Action) nos balões de mensagem.
+
+- [x] **Fase 6: Notificações Push Dinâmicas:**
+    - [x] Criar aba de "Configurações Globais" de Push (Admin Only).
+    - [x] Desacoplar OneSignal IDs do front-end e vincular ao `push_data.json`.
+    - [x] Implementar persistência de tokens mestre via API.
+    - [x] Validar inicialização dinâmica do SDK v16.
+- [x] **Fase 7: Otimização Inbox & Flow Builder**
+    - [x] Implementar Proxy `api_uazapi` no backend (Sincronização evolution).
+    - [x] Corrigir Drag & Drop e Interações no Construtor de Fluxos.
+    - [x] Implementar Sidebar Lateral Colapsável (Minimalista).
+    - [x] Otimizar Detalhes do Lead (Mostrar apenas após clique).
+    - [x] Sincronizar conversas e garantir conexão de instâncias.
+    - [x] Implement unique chat encoding (Base64 Security).
+- [x] **Sincronização Híbrida de Conversas (PHP + N8N):**
+    - [ ] Criar tabela `uazapi_chats` no Postgres para cache local.
+    - [x] Implementar `action=api_evolution` (Native PHP Sync) no [ApiController.php](file:///c:/Users/Admin/Downloads/uazapi/app/Controllers/ApiController.php).
+    - [ ] Desenvolver Workflow N8N para puxar chats em background (Opcional agora).
+    - [x] Atualizar Inbox para usar Sincronização Nativa (Sem N8N).
+
+- [x] **Fase 8: Verificação de Segurança e Refinamento UX**
+    - [x] Testar blindagem F12 e redirecionamento WAF.
+    - [x] Validar UX de áudios e mídias ricas.
+    - [x] Finalizar ajustes de cores e contrastes solicitados.
+
+- [x] **Fase 9: Integração de Compradores & CRM Refinado**
+    - [x] Implementar tabela `remarketing` no `SQL_Migrator.php`.
+    - [x] Implementar `push_save_global_settings` e `push_save_token` no [ApiController.php](file:///c:/Users/Admin/Downloads/uazapi/app/Controllers/ApiController.php).
+    - [x] Desenvolver `action=get_leads` no [ApiController.php](file:///c:/Users/Admin/Downloads/uazapi/app/Controllers/ApiController.php).
+    - [x] Atualizar [banco_leads.php](file:///c:/Users/Admin/Downloads/uazapi/app/Views/admin/banco_leads.php) com carregamento dinâmico de contatos.
+    - [x] Validar fluxo de limpeza `remarketing` vs `compradores` (Lógica SQL).
+
+- [x] **Fase 10: Extração de Instâncias Ativas & Inbox**
+    - [x] Refatorar `action=instancias` no [ApiController.php](file:///c:/Users/Admin/Downloads/uazapi/app/Controllers/ApiController.php) (Filtro `active_only`).
+    - [x] Fix main layout transition bugs on sidebar collapse ([style.css](file:///c:/Users/Admin/Downloads/uazapi/public/css/style.css)).
+- [x] Adjust Sair text for collapse.
+- [x] Apply full-bleed overrides for Inbox page ([inbox.php](file:///c:/Users/Admin/Downloads/uazapi/app/Views/admin/inbox.php)).
+- [x] Analyze Zapdata chat structure via browser subagent.
+- [x] Recreate Zapdata layout in [inbox.php](file:///c:/Users/Admin/Downloads/uazapi/app/Views/admin/inbox.php) using War Room Green/Orange theme.
+  - [x] Adjust header layout in chat main area.
+  - [x] Adjust message bubbles, input area, and icons.
+  - [x] Adjust chat list item styling (avatars, badges, alignment).
+  - [x] Refine CSS and Javascript for Chat List Filtering (Conversas vs Grupos, Phone Number Formatting).
+    - [x] Refinar `extrair_instancias` no `config.php` para robustez de tokens.
+    - [x] Atualizar Inbox UI (`loadInstances`) para sincronia de tokens ativos.
+    - [x] Validar carregamento de chats com novos tokens extraídos.
+
+- [ ] **Fase 11: Refinamento de Lógica n8n & Deploy VPS**
+    - [ ] Refinar nó "Map ID" no n8n para suportar regras por instância e normalização de IDs (`instance_jid:id`).
+    - [ ] Finalizar guia de arquitetura DigitalOcean para n8n + DB + Dashboard.
+    - [ ] Validar documentação UAZAPI mestre.

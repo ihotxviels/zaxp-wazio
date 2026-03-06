@@ -1,0 +1,80 @@
+{
+    "admin": {
+        "username": "admin",
+        "password": "$2y$10$caMQt0FI.\/EE3odXpaXVw.uF50OdhnmnHGkJLVMYH0UsxCInuM4UC",
+        "role": "admin",
+        "nome": "Admin",
+        "instancias": [
+            "chip_disparador09",
+            "chip_disparador10",
+            "chip_disparador11",
+            "chip_disparador16",
+            "chip_disparador20",
+            "chip_atendimento02",
+            "chip_atendimento03",
+            "chip_atendimento05",
+            "chip_atendimento13",
+            "chip_atendimento15",
+            "chip_atendimento17",
+            "chip_atendimento20",
+            "chip_atendimento01",
+            "chip_grupoparticipantes",
+            "chip_campanha02",
+            "chip_campanha03",
+            "chip_campanha05",
+            "chip_campanha09",
+            "chip-campanha13",
+            "chip-campanha15 - aquecendo",
+            "chip_campanha08",
+            "chip_campanha16",
+            "chip_campanha17",
+            "chip_campanha18",
+            "chip_campanha20",
+            "chip_campanha21",
+            "chip_campanha22",
+            "avisos_wpp",
+            "26_chip_campanha"
+        ],
+        "criado_em": "2025-02-21",
+        "ativo": true,
+        "hidden_instances": {
+            "c71b93af-2fdc-4065-9576-622dc34139a5": true,
+            "54d02b4a-eb8b-42f3-9f97-8549131baa0c": true,
+            "e180e98e-9d75-4016-bcc1-9f87003504de": true,
+            "2879c2cb-9e3e-45f0-b83e-890df046c398": true,
+            "de642720-ac1b-45ee-ac8e-f66f4bc649b1": true,
+            "00654d68-4fd9-4745-989a-b21d77878c25": true,
+            "eb212b08-a0de-403b-bc7c-18512f614645": true,
+            "6e74e774-9ab9-4aec-a84c-30915a47632e": true,
+            "b391e13f-f30e-4745-8408-c737e158c90f": true,
+            "d041cfae-583e-40e0-97a9-587a63e161c0": true,
+            "587856e0-1b27-4af7-b9d4-b4671be330a8": true,
+            "05ca6742-7ce3-411c-84fe-dd7afceaf2cf": true,
+            "6fd57567-d458-48d4-b4f7-74b1bea09f01": true,
+            "a9c9f053-b442-4872-a8e4-7fe3ae9ee0bd": true,
+            "ac80972c-0c19-4091-b822-b7b53c7f3855": false,
+            "fd9b6dc5-78c6-4a9c-ba92-bb21c73dbf28": false,
+            "95b862fd-8589-4196-8794-1bbbdaaf940e": false,
+            "83b7aa15-ffce-4c84-ac6c-bb51544758ac": true
+        }
+    },
+    "ruan": {
+        "username": "ruan",
+        "nome": "ruan",
+        "role": "user",
+        "ativo": true,
+        "instancias": [
+            "chip_murillo_02",
+            "chip_murillo_03",
+            "murilo gomes chip novo 6",
+            "murilo gomes chip novo 7"
+        ],
+        "modulos": [
+            "financeiro",
+            "contingencia"
+        ],
+        "hidden_instances": [],
+        "limite_instancias": 5,
+        "password": "$2y$10$b7ovPqQa.0azhfRffwzytee7LTnilSkEI1WNomw345xZOx176zg66"
+    }
+}

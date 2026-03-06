@@ -1,0 +1,38 @@
+# Implementação Dashboard (Financeiro, Contingência, Push)
+
+## Proposed Changes
+
+### Push Notifications
+#### [MODIFY] [push_settings.php](file:///c:/Users/Admin/Downloads/uazapi/app/Views/admin/push_settings.php)
+- Adicionar Media Queries `@media (max-width: 768px)` para tornar a página de Push Settings 100% responsiva em dispositivos móveis.
+- Ajustar a largura da sidebar, margens, tamanhos de fonte da topbar e `main-content` no mobile.
+- Ajustar inputs flex.
+
+### Financeiro
+#### [MODIFY] [financeiro.php](file:///c:/Users/Admin/Downloads/uazapi/app/Views/admin/financeiro.php)
+- Remover todo o CSS não utilizado referente a gráficos (`.fin-chart-box`, `.fin-chart-header`, `.fin-chart-legend`, etc.).
+- Garantir layout limpo apenas para a listagem da tabela terminal.
+
+#### [MODIFY] [financeiro.js](file:///c:/Users/Admin/Downloads/uazapi/public/js/financeiro.js)
+- Excluir a função [renderGrafico()](file:///c:/Users/Admin/Downloads/uazapi/public/js/financeiro.js#186-292).
+- Remover variável `finChart`.
+- Remover a chamada de [renderGrafico()](file:///c:/Users/Admin/Downloads/uazapi/public/js/financeiro.js#186-292) dentro da função [carregarFinanceiro()](file:///c:/Users/Admin/Downloads/uazapi/public/js/financeiro.js#174-182).
+
+#### [MODIFY] [financeiro_header.php](file:///c:/Users/Admin/Downloads/uazapi/app/Views/layouts/financeiro_header.php)
+- Ocultar/Remover a tag `<script>` de importação do Chart.js.
+
+### Contingência
+#### [MODIFY] [contingencia.php](file:///c:/Users/Admin/Downloads/uazapi/app/Views/admin/contingencia.php)
+- Formatar, debugar e garantir que a leitura e gravação no `chips_data/chips_username.json` esteja intacta.
+- Devolver o arquivo em sua totalidade (nenhum placeholder).
+
+#### [MODIFY] [contingencia.js](file:///c:/Users/Admin/Downloads/uazapi/public/js/contingencia.js)
+- Revisar Fetch API, limpar sintaxe e retornar 100% do código funcional.
+
+## Verification Plan
+### Automated Tests
+- Não há testes automatizados disponíveis.
+### Manual Verification
+- O usuário e eu verificaremos atualizando o painel de Push no celular ou redimensionando o navegador para garantir que está 100% responsivo.
+- Verificaremos o painel Financeiro para confirmar ausência de erros no console pela remoção do Chart.js.
+- Devolverei os blocos das correções integralmente no chat (ou gravados nos arquivos com notificação), conforme exigido pela regra "Zero Placeholders" e "Reescrita Completa".

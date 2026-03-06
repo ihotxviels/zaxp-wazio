@@ -1,0 +1,60 @@
+# Plano de Implementação: Motor de Fluxo Nativo (UAZAPI Native Flow Engine)
+
+## Objetivo
+Criar um interpretador de fluxos escrito 100% em PHP dentro do UAZAPI. O sistema deve ser capaz de receber Wehbooks das instâncias (quando um cliente enviar mensagem), carregar o JSON do Constutor de Fluxos do banco / filesystem, identificar em qual "Bloco" o cliente está, e processar as Lógicas (Enviar mensagem, Aguardar, Delay, Condições) repassando o comando de volta para a Instância via cURL local.
+
+Isto elimina a dependência do N8N para automações padrão, transformando o UAZAPI em uma plataforma SaaS completa (estilo BotConversa/ZapData).
+
+## Arquitetura Solicitada
+
+### O Cérebro: `FlowInterpreter.php`
+Uma nova classe/script na pasta `core` ou `Controllers` que receberá o Payload (Webhook Type: message.upsert).
+O script fará:
+1.  **Reconhecimento do Lead**: Verifica quem enviou a mensagem (Número/ID) e em qual Instância.
+2.  **Busca de Contexto**: Procura no banco de dados se esse lead já está no meio de um fluxo (`table: lead_flow_status`).
+    *   *Se sim*: Pega a resposta, salva e avança para o próximo "Bloco Ligado" (Edges).
+    *   *Se não*: Verifica se a mensagem disparou algum "Gatilho" (Palavra-chave cadastrada em algum fluxo ativo).
+3.  **Execução do Nó (Node Runner)**: Um switch case para cada tipo de bloco:
+    *   `trigger_message`: Validação Regex / Exata.
+    *   `action_text`, `action_image`, `action_audio`: Chama a própria API do UAZAPI (`sendMessage`, `sendMedia`, etc) para o número do lead. Múltiplos blocos encadeados enviarão as mensagens sequencialmente.
+    *   `logic_delay`: Pausa o fluxo. Pode usar um `sleep()` em background (para delays curtos) ou transferir o estado do Lead para uma fila do DB (CRON / Background Worker) para delays longos.
+    *   `logic_wait`: Pausa a execução e grava no banco que o *Próximo passo esperado para o Lead X é o Bloco Y*.
+    *   `logic_condition`: Valida campos extras (ex: Tem tag XPTO? Sim -> Edge 1. Não -> Edge 2).
+
+### Persistência de Estado (State Machine)
+Para que o sistema "lembre" onde o lead parou (principalmente por causa dos blocos *Aguardar Resposta* e *Delay*), precisamos de uma mini tabela / controle JSON de Estado:
+Ex: `fluxo_em_andamento`:
+*   Lead: `5511999999999`
+*   Flow_ID: `flow_instanciaABC_BoasVindas`
+*   Current_Node_ID: `dndnode_4`
+*   Wait_Until: `null` (se estiver aguardando resposta) ou `Timestamp` (se for Delay agendado).
+
+## Proposed Changes
+
+### [Novo Arquivo] `app/Controllers/FlowWebhook.php`
+- Webhook endpoint dedicado para receber as mensagens das instancias UAZAPI.
+- Fará a triagem inicial (IsGroup? IsFromMe? Ignore).
+
+### [Novo Arquivo] `app/Services/FlowInterpreter.php`
+- O "Motor" pesado.
+- Contém a classe que:
+    1. Carrega o Array do Flow JSON.
+    2. Lê o campo `edges` para mapear "Dado o bloco A, os próximos são B e C".
+    3. Loop de travessia do gráfico (Graph Traversal) rodando as ações até encontrar um `logic_wait`, `logic_delay` ou terminar a cadeia (end).
+
+### [MODIFY] [task.md](file:///C:/Users/Admin/.gemini/antigravity/brain/8390c10d-2b7f-49d4-9eba-32e18a3bc2d0/task.md) e [postgres_master_schema.md](file:///C:/Users/Admin/.gemini/antigravity/brain/8390c10d-2b7f-49d4-9eba-32e18a3bc2d0/postgres_master_schema.md)
+- Atualizar o esquema do banco de dados (que fizemos anteriormente na teoria) para incluir a tabela essencial de `flow_executions` ou de `lead_context` necessária para o estado do fluxo.
+
+### Gateways Externos (n8n Exceção)
+Conforme solicitado pelo usuário, o N8N só será evocado em nós muito específicos (como `logic_payment`, `action_pix`, `action_pixel`) executando um curl pro n8n e esperando o retorno assíncrono. O resto da teia roda nativa.
+
+## Test/Verification Plan
+
+### Automated Tests
+*Não temos testes automatizados escritos no momento. Dependemos do teste Black Box via Requests reais/Postman.*
+*   Simulação de Disparo Local usando um mock do Webhook da Evolution API para bater no `FlowWebhook.php` e verificar os logs do motor de travessia do JSON.
+
+### Manual Verification
+1. O usuário precisará criar um fluxo simples (Gatilho: "Teste" -> Enviar Texto "Ok!" -> Enviar Imagem).
+2. O UAZAPI precisará configurar a Instância real para apontar o Webhook `message.upsert` para a rota interna `/uazapi/api/flow_webhook`.
+3. O usuário mandará a palavra "Teste" no WhatsApp e validará se recebeu o texto e a Imagem sem que NENHUM log tenha passado pelo painel N8N externo, acompanhando o debug via arquivo `/logs/flow_engine.log`.

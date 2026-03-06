@@ -1,0 +1,159 @@
+{
+    "name": "🤖 [UAZAPI] PUSH NOTIFICATIONS WEBHOOK",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "receber-alertas-wazio",
+                "responseMode": "lastNode",
+                "options": {}
+            },
+            "id": "4d904817-bb18-4f8c-9227-a1b2537e615e",
+            "name": "📡 Webhook (Painel UAZALERTS)",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                8288,
+                19232
+            ],
+            "webhookId": "612a1701-185e-48c5-828a-f068ba387cfd"
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "e5370715-aa79-468a-86ed-1a1a3ab78cf5",
+                            "name": "APP_ID",
+                            "value": "7efc7f67-06fd-4c11-a9b8-1086f316b424",
+                            "type": "string"
+                        },
+                        {
+                            "id": "1",
+                            "name": "REST_API_KEY",
+                            "value": "os_v2_app_p36h6zyg7vgbdknyccdpgfvuetwcr7wfwwwej54xzkuz76bztrhiy3fxhhedffecq3s5fyns4lzxkxlkb3syng7yv2n7wd3tlwzaniq",
+                            "type": "string"
+                        },
+                        {
+                            "id": "2",
+                            "name": "pushPayload",
+                            "value": "={{ $json.body.pushPayload }}",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "28abbafe-88eb-4627-8a27-4af1cd7a8066",
+            "name": "⚙️ Credenciais OneSignal",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+                8528,
+                19232
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// Usa o pushPayload pronto enviado pelo PHP\n// Não usa mais tokens_destinos (formato antigo) — tudo montado pelo servidor\nconst creds = $input.first().json;\n\nlet payloadStr = creds.pushPayload;\nif (!payloadStr) {\n  throw new Error('pushPayload não encontrado. Verifique se o WAZ.IO está enviando o payload corretamente.');\n}\n\n// Faz parse do JSON para validar\nlet payload;\ntry {\n  payload = JSON.parse(payloadStr);\n} catch(e) {\n  throw new Error('pushPayload inválido: ' + e.message);\n}\n\n// Se include_subscription_ids está vazio, registre um aviso mas NÃO bloqueie\n// (o usuário pode ainda não ter registrado devices via Tokens & Alertas)\nif (!payload.include_subscription_ids || payload.include_subscription_ids.length === 0) {\n  // Retorna resposta de aviso sem chamar OneSignal\n  return [{ json: { ok: false, aviso: 'Nenhum device registrado. Acesse Tokens & Alertas > Gerador de Token e clique em Permitir Notificações.', payload_recebido: payload } }];\n}\n\n// Tudo OK: repassa pushPayload como string para o HTTP Request\nreturn [{\n  json: {\n    REST_API_KEY: creds.REST_API_KEY,\n    pushPayload: payloadStr\n  }\n}];"
+            },
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                8736,
+                19232
+            ],
+            "id": "fafa4868-7ec9-4583-b687-734529893ea5",
+            "name": "🔧 Code - Formatar pushNotifications"
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://onesignal.com/api/v1/notifications",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json; charset=utf-8"
+                        },
+                        {
+                            "name": "Authorization",
+                            "value": "=Basic {{ $json.REST_API_KEY }}"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ $json.pushPayload }}",
+                "options": {}
+            },
+            "id": "062fa5f8-476f-4256-b29d-e285ebfee7b3",
+            "name": "🚀 Enviar Push OneSignal",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                8944,
+                19232
+            ]
+        },
+        {
+            "parameters": {
+                "content": "## Como Configurar PUSH NO N8N:\n\n1. **URL DO WEBHOOK:** Configure seu Webhook clicando duas vezes no Node `📡 Webhook`. Copie a Production URL e cole em **Tokens & Alertas > Comunicações > URL Webhook N8N**.\n2. **REST API KEY:** No node `⚙️ Credenciais OneSignal`, atualize a `REST_API_KEY` com sua chave do OneSignal.\n3. **O PHP já monta o payload completo** — o Code node só valida e repassa.\n4. Se `include_subscription_ids` vier vazio, o Code node retorna aviso sem chamar OneSignal (usuário ainda não registrou device).",
+                "height": 248,
+                "width": 640,
+                "color": 6
+            },
+            "type": "n8n-nodes-base.stickyNote",
+            "position": [
+                8288,
+                18928
+            ],
+            "typeVersion": 1,
+            "id": "894e6e2d-c637-4d45-820b-af99f07bb57b",
+            "name": "Sticky Note1"
+        }
+    ],
+    "connections": {
+        "📡 Webhook (Painel UAZALERTS)": {
+            "main": [
+                [
+                    {
+                        "node": "⚙️ Credenciais OneSignal",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "⚙️ Credenciais OneSignal": {
+            "main": [
+                [
+                    {
+                        "node": "🔧 Code - Formatar pushNotifications",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "🔧 Code - Formatar pushNotifications": {
+            "main": [
+                [
+                    {
+                        "node": "🚀 Enviar Push OneSignal",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "pinData": {},
+    "settings": {
+        "executionOrder": "v1"
+    },
+    "meta": {
+        "instanceId": "d924bab2d769f916cedee4b95c153db11fb5441ce83b7e05b43cf209af2ace55"
+    }
+}

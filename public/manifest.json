@@ -1,0 +1,42 @@
+{
+    "name": "WAZ.IO - Gerenciador API",
+    "short_name": "WAZ.IO",
+    "description": "WAZ.IO WAR ROOM — Painel de Gerenciamento de Instancias WhatsApp",
+    "start_url": "/wazio/dashboard",
+    "scope": "/wazio/",
+    "display": "standalone",
+    "background_color": "#080c09",
+    "theme_color": "#bcfd49",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/wazio/public/images/waz-icon-hd.png?v=6",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/wazio/public/images/waz-icon-hd.png?v=6",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/wazio/public/images/waz-icon-hd.png?v=6",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "/wazio/public/images/waz-icon-hd.png?v=6",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+    "categories": [
+        "business",
+        "productivity"
+    ],
+    "lang": "pt-BR"
+}

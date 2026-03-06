@@ -1,0 +1,102 @@
+# 🏆 Super Inbox & Flow Builder Master Guide
+
+Este guia define a arquitetura técnica para recriar a experiência do ZapData/BotConversa utilizando o motor da **UAZAPI** e a automação do **N8N** hospedados na **DigitalOcean**.
+
+---
+
+### 1. 🏗️ Arquitetura de "Guerra" (Infraestrutura)
+Com seus $200 de crédito na DigitalOcean, o setup ideal é um Droplet com **Docker** rodando:
+
+*   **N8N (Worker):** Responsável por rodar a lógica dos fluxos, transcrever áudios e integrar com CRMs externos.
+*   **PostgreSQL (Database):** Onde guardaremos as `Conversões`, `Etiquetas Customizadas` e o `Estado de Fluxo` de cada lead.
+*   **Dashboard Frontend:** Uma SPA (Single Page Application) fluida que consome a UAZAPI em tempo real.
+
+---
+
+### 2. 💬 Inbox Inteligente (Replicando ZapData)
+Abaixo, o mapeamento de funcionalidades para você construir o seu Inbox:
+
+| Funcionalidade ZapData | Endpoint UAZAPI (Slug) | Lógica de Implementação |
+| :--- | :--- | :--- |
+| **Histórico Completo** | `POST /message/find` | Ao clicar no chat, buscar as últimas 50 mensagens. |
+| **Filtros (Lidos/Não Lidos)** | `POST /chat/find` | Usar parâmetro `unread: true/false` para alternar as abas. |
+| **Seleção de Tags/Labels** | `POST /chat/label` | Salvar o ID da etiqueta no contato no WhatsApp Real. |
+| **Programar Mensagem** | `POST /sender/advanced` | Usar campo `scheduled_for` (Timestamp futurista). |
+| **Filtrar por Pagos** | `POST /chat/updateCustomFields` | Criar um campo customizado `status_pagamento`. |
+| **Fechar/Mudar Status** | `POST /chat/archive` | Move a conversa para a aba de "Resolvidos". |
+| **Bloquear/Ignorar** | `POST /contact/block` | Impede recebimento e limpa o lead do Inbox. |
+| **Opção de Grupos** | `GET /group/list` | Flag `isGroup: true` no filtro de busca. |
+
+---
+
+### 3. 🤖 Flow Builder (Pular Etapas & Controle)
+Diferente de um bot simples, o seu Flow Builder terá controle manual direto do Inbox.
+
+*   **Pausar Fluxo:** No Inbox, ao clicar em "Pausar", o sistema envia `POST /chatbot/settings` desativando o bot para aquele chat. Isso permite atendimento humano sem o bot interromper.
+*   **Pular Etapa / Continuar:**
+    1.  O N8N guarda no Postgres a etapa atual do cliente (ex: `etapa_2`).
+    2.  No Inbox, você tem botões que enviam um webhook para o N8N mudando esse valor para `etapa_3`.
+    3.  O N8N recebe e dispara a próxima mensagem via `POST /chatbot/trigger`.
+
+---
+
+### 4. 🎨 Anatomia Visual do Chat (Recriação de Mensagens)
+Para ter um chat igual ao do ZapData, você não apenas exibe o texto, você "recria" a mensagem baseada no tipo:
+
+*   **Bolhas de Chat:** Devem ter estados de "Enviando", "Entregue" (Check duplo) e "Lido" (Check laranja).
+*   **Player de Áudio:** Não use o player padrão do navegador. Crie um componente com:
+    *   Botão Play/Pause circular.
+    *   Barra de progresso (Waveform ou Linha).
+    *   Tempo de duração.
+*   **Mensagens de Sistema:** Centralizadas e sem bolha (ex: "Fluxo pausado por Adriano").
+
+### 5. 🎙️ Botão de Áudio (Como funciona?)
+O ZapData usa a **MediaRecorder API** do navegador. 
+1.  **Gravação:** O usuário segura o botão, o navegador grava o áudio em formato `.webm` ou `.ogg`.
+2.  **Upload:** O arquivo é enviado para o seu servidor (ou Supabase Storage).
+3.  **Envio:** Você pega a URL desse arquivo e envia para a UAZAPI via `POST /sender/audio`.
+*Dica:* A UAZAPI converte automaticamente para o formato que o WhatsApp aceita (Opus).
+
+### 6. 🧠 O Cérebro do Flow Builder (React Flow)
+A página de fluxos (`inbox/flows`) é um orquestrador visual de caminhos. Para replicar isso:
+
+*   **Tipos de Nós (Blocos):**
+    *   **Gatilhos:** Início por Palavras-Chave, Novo Contato ou Etiqueta específica.
+    *   **Mensagens:** Texto, Áudio (com delay de "gravando"), Imagem e Botões.
+    *   **Inteligência:** Bloco "IA Responder" que consulta o Qdrant/UAZAPI antes de enviar.
+    *   **Controle:** "Aguardar Resposta" (o robô para até o cliente falar algo) e "Condição" (IF/ELSE baseado na resposta).
+*   **Gestão de Sessões:** Para saber quem "Finalizou" o fluxo, usamos um toggle de **"Finalizar Sessão"** dentro do nó de Etiqueta ou Mensagem Final. Isso grava no banco que o objetivo foi atingido.
+
+### 7. 🔎 Filtros & Navegação Lateral
+O menu esquerdo é o seu centro de comando:
+*   **Sincronizar Contatos:** Chama `GET /contact/all` da UAZAPI para atualizar nomes e fotos.
+*   **Filtrar por Número:** Essencial para quem roda várias operações. O filtro isola conversas de uma instância específica.
+*   **Etiquetas Padrão vs Custom:** 
+    *   *Padrão:* "Pagos", "Ignorados", "Não Lidos" (filtros automáticos via API).
+    *   *Custom:* Criadas por você (ex: "Boleto Gerado") para categorizar o funil.
+
+### 8. 📊 Detalhes do Contatos (Sidebar Lateral)
+Ao selecionar um contato, a barra lateral (como na foto do ZapData) deve mostrar:
+*   **Eventos:** Log de quando ele entrou no fluxo, quando clicou em um link e quando comprou. (Alimentado por Webhooks do N8N).
+*   **Pedidos:** Botão "Fazer Pedido" que abre um formulário curto e salva os dados no seu Postgres.
+*   **Mensagens Programadas:** Uma lista de envios pendentes para aquele cliente (buscados via `POST /sender/list_scheduled`).
+
+---
+
+### 9. 🎯 Facebook Ads Tracking (CTWA)
+
+Para identificar de qual anúncio o lead veio (como no ZapData), o sistema monitora o objeto `referral` contido em mensagens de "Click to WhatsApp".
+
+*   **Estrutura do Dado**: Quando um lead clica num anúncio, a primeira mensagem contém um objeto `referral` com `headline` (título), `body`, `source_id` (Ad ID) e `image_url`.
+*   **Captura & Exibição**: O frontend do Inbox detecta esse objeto e exibe um "Card de Anúncio" fixo no topo da conversa, dando o contexto imediato ao atendente.
+*   **Atribuição**: Esses dados são salvos no banco de dados vinculados ao contato para medir o ROI de cada campanha diretamente no painel.
+
+---
+
+### 🏁 Próximos Passos (Mão na Massa):
+
+1.  **Setup DigitalOcean:** Configurar o Droplet com Docker + N8N + Postgres.
+2.  **ApiController Evolution:** Adicionar os novos Slugs mapeados para que o Dashboard consiga falar com a UAZAPI.
+3.  **Frontend Layout:** Desenvolver a nova tela `inbox_chat.php` seguindo o design dark/metálico sincronizado.
+
+**Quer que eu comece a criar o esboço da `inbox_chat.php` com as 3 colunas (Lista de Conversas | Chat | Detalhes)?** 🚀⚔️👊

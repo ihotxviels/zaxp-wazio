@@ -1,0 +1,12 @@
+{
+    "devices": [],
+    "settings": {
+        "master_enabled": true,
+        "entradas": true,
+        "saidas": true,
+        "instancias": true,
+        "instancias_conectadas": false,
+        "proxies": true,
+        "n8n_webhook": "https://criadordigital-n8n-webhook.7phgib.easypanel.host/webhook/receber-alertas-waz"
+    }
+}

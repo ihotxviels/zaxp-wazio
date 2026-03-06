@@ -1,0 +1,31 @@
+{
+    "cols": {
+        "1": {
+            "title": "ADMINISTRADORES",
+            "icon": "shield-alert",
+            "color": "var(--yellow)"
+        },
+        "2": {
+            "title": "CAMPANHA ADS",
+            "icon": "target",
+            "color": "var(--blue)"
+        },
+        "3": {
+            "title": "GERAR BOLETOS",
+            "icon": "file-text",
+            "color": "var(--green)"
+        }
+    },
+    "devices": [
+        "MOTOROLA 01",
+        "MOTOROLA 02",
+        "MOTOROLA 03",
+        "MOTOROLA 04",
+        "MOTOROLA 05",
+        "MOTOROLA 06",
+        "MOTOROLA 07",
+        "MOTOROLA 08",
+        "MOTOROLA 09",
+        "MOTOROLA 10"
+    ]
+}

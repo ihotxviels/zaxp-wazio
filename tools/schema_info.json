@@ -1,0 +1,42 @@
+[
+    {
+        "column_name": "id",
+        "data_type": "integer"
+    },
+    {
+        "column_name": "user_id",
+        "data_type": "integer"
+    },
+    {
+        "column_name": "instance_name",
+        "data_type": "character varying"
+    },
+    {
+        "column_name": "instance_token",
+        "data_type": "text"
+    },
+    {
+        "column_name": "instance_number",
+        "data_type": "character varying"
+    },
+    {
+        "column_name": "status",
+        "data_type": "character varying"
+    },
+    {
+        "column_name": "connected",
+        "data_type": "boolean"
+    },
+    {
+        "column_name": "last_checked",
+        "data_type": "timestamp without time zone"
+    },
+    {
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone"
+    },
+    {
+        "column_name": "updated_at",
+        "data_type": "timestamp without time zone"
+    }
+]

@@ -1,0 +1,37 @@
+# Plano de Implementação: Sistema de Notificações Push
+
+Este plano visa desacoplar as configurações do OneSignal do código-fonte, permitindo que o administrador configure o sistema diretamente via interface, garantindo persistência entre deploys.
+
+## User Review Required
+
+> [!IMPORTANT]
+> A migração dos IDs do OneSignal para o banco de dados (JSON) requer que o administrador preencha os dados na nova aba de Configurações após o deploy para que as notificações voltem a funcionar.
+
+## Alterações Propostas
+
+### 🟢 Dashboard & UI
+
+#### [MODIFY] [push_settings.php](file:///c:/Users/Admin/Downloads/uazapi/app/Views/admin/push_settings.php)
+- **Integração Dinâmica**: Alterar a inicialização do `OneSignal.init` para usar variáveis PHP vindas do `push_data.json`.
+- **Nova Aba "Configurações Globais"**:
+    - Visível apenas para administradores.
+    - Campos para: `onesignal_id`, `safari_web_id`, `n8n_webhook`.
+    - Botão "Salvar Configurações Mestre".
+- **Interface de Gerador**: Manter a funcionalidade de registrar o dispositivo atual (Token Generation).
+
+### 🔵 Backend (API)
+
+#### [MODIFY] [ApiController.php](file:///c:/Users/Admin/Downloads/uazapi/app/Controllers/ApiController.php)
+- **Novo Endpoint `push_save_global_settings`**:
+    - Validar se o usuário é admin.
+    - Atualizar a chave `settings` no arquivo `push_data.json`.
+    - Retornar sucesso/erro.
+
+## Plano de Verificação
+
+### Verificação Manual
+1. Acessar a página `/admin/push-settings`.
+2. Verificar se a aba de "Configurações Globais" aparece para o Admin.
+3. Preencher um App ID de teste e salvar.
+4. Recarregar a página e inspecionar o código fonte (ou console) para ver se o OneSignal está tentando inicializar com o novo ID.
+5. Testar a geração de token no dispositivo atual para garantir que o registro de dispositivos continua funcionando.

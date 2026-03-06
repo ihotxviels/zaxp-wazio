@@ -1,0 +1,2917 @@
+{
+  "name": "🤖 [UAZAPI] DASHBOARD DE CONEXÕES [GET & POST]",
+  "nodes": [
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, data: $json } }}",
+        "options": {}
+      },
+      "id": "e1c22bd4-ecac-49e3-af07-eedec944fd27",
+      "name": "✅ Resposta: Foto Perfil",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        5248,
+        12480
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('⚙️ CONFIG GLOBAL12').item.json.BASE_URL }}/profile/image",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $json.body.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "imageUrl",
+              "value": "={{ $json.body.imageUrl }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "18b742f9-a587-409f-b545-baeb1f31af13",
+      "name": "📡 API: Perfil Foto",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5008,
+        12480
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "atualizar-foto-perfil",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "530c42f1-883a-4cff-beff-774dc88b3435",
+      "name": "🌐 Webhook: Perfil Foto",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        4576,
+        12480
+      ],
+      "webhookId": "wh-perf-foto-001"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, data: $json } }}",
+        "options": {}
+      },
+      "id": "cf7f1cc6-c82e-4bd6-9761-679a8dc2e339",
+      "name": "✅ Resposta: Nome Perfil",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        5248,
+        12256
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('⚙️ CONFIG GLOBAL11').item.json.BASE_URL }}/profile/name",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $json.body.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $json.body.name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "41b7009b-5e36-4d22-8325-5587b573846b",
+      "name": "📡 API: Perfil Nome",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5008,
+        12256
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "atualizar-nome-perfil",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "45745b79-7f99-492d-8b71-426572693033",
+      "name": "🌐 Webhook: Perfil Nome",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        4576,
+        12256
+      ],
+      "webhookId": "wh-perf-nome-001"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "d01c402c-04e1-4330-9b0c-9b64cf1a6696",
+      "name": "✅ Resposta: Duplicada",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        5728,
+        12016
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nconst qr = (item.json?.instance?.qrcode || '').replace(/^data:image\\/png;base64,/,'');\nconst token = $('📡 API: Duplicar Init').first().json?.instance?.token;\nconst nome = $('🌐 Webhook: Duplicar').first().json?.body?.newInstanceName;\nreturn [{ json: { success: true, instanceName: nome, token, qrCodeBase64: qr, message: `Instância '${nome}' duplicada!` } }];"
+      },
+      "id": "29f3ae6d-9915-4863-8e21-a405c316275e",
+      "name": "📋 QR Duplicada",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5488,
+        12016
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('⚙️ CONFIG GLOBAL10').item.json.BASE_URL }}/instance/connect",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $json.instance.token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "97df3556-3e21-470f-9412-c14967fa5b2f",
+      "name": "🔌 Duplicar: Conectar",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        5248,
+        12016
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('⚙️ CONFIG GLOBAL10').item.json.BASE_URL }}/instance/init",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "admintoken",
+              "value": "={{ $('⚙️ CONFIG GLOBAL10').item.json.ADMIN_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $json.body.newInstanceName }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ad1fc270-0e43-4375-b279-575259caa49a",
+      "name": "📡 API: Duplicar Init",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5008,
+        12016
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "duplicar-instancia",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "60c7c8e8-ba25-45f6-aa03-af0fbfd26987",
+      "name": "🌐 Webhook: Duplicar",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        4576,
+        12016
+      ],
+      "webhookId": "wh-dupl-001"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, message: 'Proxy removido.', data: $json } }}",
+        "options": {}
+      },
+      "id": "9361801b-14a9-4ee0-8b8a-da8c21364811",
+      "name": "✅ Resposta: Proxy Del",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        5248,
+        11776
+      ]
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "={{ $('⚙️ CONFIG GLOBAL9').item.json.BASE_URL }}/instance/proxy",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $json.body.token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b96e34b2-5682-4757-b121-d861bf0f6bc2",
+      "name": "📡 API: Proxy Del",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5008,
+        11776
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "DELETE",
+        "path": "remover-proxy",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "c208f68b-502c-4cdf-9ae7-f08cfcf9cb62",
+      "name": "🌐 Webhook: Proxy Del",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        4576,
+        11776
+      ],
+      "webhookId": "wh-proxy-del-001"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, message: 'Proxy configurado.', data: $json } }}",
+        "options": {}
+      },
+      "id": "b715702c-7d5b-4a7b-bc29-24bc4e3547cb",
+      "name": "✅ Resposta: Proxy Set",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        5248,
+        11552
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('⚙️ CONFIG GLOBAL8').item.json.BASE_URL }}/instance/proxy",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $json.body.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ host: $json.body.host, port: $json.body.port, username: $json.body.username || '', password: $json.body.password || '', protocol: $json.body.protocol || 'http' }) }}",
+        "options": {}
+      },
+      "id": "f4386c51-eea6-4ac3-8759-53f024c7b521",
+      "name": "📡 API: Proxy Set",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5008,
+        11552
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "configurar-proxy",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "ea9b33ea-bfcc-43ad-8958-5d3652dab989",
+      "name": "🌐 Webhook: Proxy Set",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        4576,
+        11552
+      ],
+      "webhookId": "wh-proxy-set-001"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "OK",
+        "options": {}
+      },
+      "id": "d68d3df4-9166-474c-b2f9-0fe8a63d6a96",
+      "name": "✅ Resposta Imediata",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        5952,
+        9248
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('⚙️ CONFIG GLOBAL2').item.json.BASE_URL }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $json.token }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('⚙️ CONFIG GLOBAL2').item.json.GRUPO_CONTINGENCIA }}"
+            },
+            {
+              "name": "text",
+              "value": "=✅ *WHATSAPP CONECTADO* 🆗\n\n*CHIP:* {{ $json.name }}\n*PERFIL:* {{ $json.profileName || 'N/A' }}\n*NÚMERO:* {{ $json.ownerJid || 'Aguardando...' }}\n\n> CA | Community Access"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "178f3515-33ff-44ae-aabc-cb0d6f81231b",
+      "name": "📢 Confirmar Conexão no Grupo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5728,
+        9248
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cond-match-instancia",
+              "leftValue": "={{ $('🌐 Webhook: Evento Uazapi').item.json.body.instanceName }}",
+              "rightValue": "={{ $json.name }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "f31baadb-807f-4430-86be-37fe2dfb8c4b",
+      "name": "🔎 Instância Bate?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        5488,
+        9248
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "name, connectionStatus, profileName, ownerJid, token",
+        "options": {}
+      },
+      "id": "ca27e6e7-a970-4838-a626-741fdba3f553",
+      "name": "📂 Separar Dados",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        5248,
+        9248
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('⚙️ CONFIG GLOBAL2').item.json.BASE_URL }}/instance/all",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "AdminToken",
+              "value": "={{ $('⚙️ CONFIG GLOBAL2').item.json.ADMIN_TOKEN }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "92a9eaf7-cee4-4ab9-9ea2-9a98bd432837",
+      "name": "📡 Buscar Instâncias Evento",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5008,
+        9248
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "receber-evento-uazapi",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "1a091f43-8ab7-473d-9b23-830064cf4378",
+      "name": "🌐 Webhook: Evento Uazapi",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        4560,
+        9248
+      ],
+      "webhookId": "wh-evento-uazapi-001"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('⚙️ CONFIG GLOBAL1').item.json.BASE_URL }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $('⚙️ CONFIG GLOBAL1').item.json.TOKEN_AVISOS }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('⚙️ CONFIG GLOBAL1').item.json.NUMERO_NOTIFICACAO }}"
+            },
+            {
+              "name": "text",
+              "value": "=🚨 *CHIP DESCONECTADO — AVISO PESSOAL*\n\n🔹 *Chip:* {{ $json.chip_name }}\n🔹 *Número:* {{ $json.phone_fmt }}\n🔹 *Status:* {{ $json.status }}\n\n_Acesse o painel para reconectar._\n_CA Panel · Uazapi_"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "629f2fda-74a8-44a7-9d0c-88604fe991d8",
+      "name": "📲 Notificar Proprietário",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5968,
+        8688
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('⚙️ CONFIG GLOBAL1').item.json.PANEL_URL }}/api/api.php?action=alerta_desconexao",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-panel-secret",
+              "value": "={{ $('⚙️ CONFIG GLOBAL1').item.json.PANEL_SECRET }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chip_name: $json.chip_name, phone_raw: $json.phone_raw, status: $json.status }) }}",
+        "options": {}
+      },
+      "id": "e3b0df6a-8ff1-4826-a14b-15fa63466842",
+      "name": "📊 Notificar Painel PHP",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5728,
+        8688
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('⚙️ CONFIG GLOBAL1').item.json.BASE_URL }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $('⚙️ CONFIG GLOBAL1').item.json.TOKEN_AVISOS }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('⚙️ CONFIG GLOBAL1').item.json.GRUPO_CONTINGENCIA }}"
+            },
+            {
+              "name": "text",
+              "value": "=🚨 *ATENÇÃO: WHATSAPP DESCONECTADO*\n\n📋 *Detalhes:*\n🔹 *Chip:* {{ $json.chip_name }}\n🔹 *Número:* {{ $json.phone_fmt }}\n🔹 *Status:* {{ $json.status }}\n\nAcesse o painel e reconecte via QR Code.\n\n⚠️ *Causas Prováveis:*\n• Banimento temporário pela Meta.\n• Expiração (14 dias sem uso).\n• Desconexão manual no celular.\n\n@todos\n_CA Panel · Uazapi_"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9cc2bdb8-f049-4535-b23d-8439272e5b58",
+      "name": "📢 Alertar Grupo Contingência",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5488,
+        8688
+      ],
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "jsCode": "const config = $('⚙️ CONFIG GLOBAL1').first().json;\nconst termosIgnorados = (config.TERMOS_IGNORADOS || '').split(',').map(t => t.trim().toLowerCase());\nlet lista = [];\nif (items.length > 0 && Array.isArray(items[0].json)) { lista = items[0].json; }\nelse { lista = items.map(i => i.json); }\nconst offline = lista.filter(instancia => {\n    const st = (instancia.connectionStatus || instancia.status || '').toLowerCase();\n    if (st === 'connected' || st === 'open') return false;\n    const nome = (instancia.name || '').toLowerCase();\n    const perfil = (instancia.profileName || '').toLowerCase();\n    return !termosIgnorados.some(t => nome.includes(t) || perfil.includes(t));\n});\nif (offline.length === 0) return [];\nconst fmt = (raw) => {\n    let n = (raw || '').toString().replace(/\\D/g,'');\n    if (n.startsWith('55') && n.length >= 12) {\n        const ddd = n.slice(2,4); const num = n.slice(4);\n        return `+55 ${ddd} ${num.slice(0,-4)}-${num.slice(-4)}`;\n    }\n    return raw || 'Não identificado';\n};\nreturn offline.map(i => ({ json: {\n    chip_name: i.name || 'Sem Nome',\n    phone_raw: i.owner || i.ownerJid || '',\n    phone_fmt: fmt(i.owner || i.ownerJid || ''),\n    status: i.connectionStatus || i.status || 'disconnected',\n    token: i.token || ''\n}}));"
+      },
+      "id": "cf6f1fbd-19a6-4008-a8e5-b0181f8e715b",
+      "name": "🔍 Filtrar Offline",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5248,
+        8688
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('⚙️ CONFIG GLOBAL1').item.json.BASE_URL }}/instance/all",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "AdminToken",
+              "value": "={{ $('⚙️ CONFIG GLOBAL1').item.json.ADMIN_TOKEN }}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b3179957-a514-44a3-9dfd-6031bb68d61a",
+      "name": "📡 Buscar Todas Instâncias",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5008,
+        8688
+      ],
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 30
+            }
+          ]
+        }
+      },
+      "id": "45b69d41-c6ff-47a1-aa82-3cf17d1619a1",
+      "name": "⏰ A cada 30 min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        4560,
+        8688
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-001",
+              "name": "ADMIN_TOKEN",
+              "value": "CLa2LD2E1AtLWWgw1HiCjvFxj3LAipXjBKizJRiQybEs5lM1mz",
+              "type": "string"
+            },
+            {
+              "id": "cfg-002",
+              "name": "BASE_URL",
+              "value": "https://zapx1analytics.uazapi.com",
+              "type": "string"
+            },
+            {
+              "id": "cfg-003",
+              "name": "NUMERO_NOTIFICACAO",
+              "value": "558398099916",
+              "type": "string"
+            },
+            {
+              "id": "cfg-004",
+              "name": "TOKEN_AVISOS",
+              "value": "00654d68-4fd9-4745-989a-b21d77878c25",
+              "type": "string"
+            },
+            {
+              "id": "cfg-005",
+              "name": "GRUPO_CONTINGENCIA",
+              "value": "120363420366289821@g.us",
+              "type": "string"
+            },
+            {
+              "id": "cfg-006",
+              "name": "PANEL_URL",
+              "value": "https://acessify.site/uazapi",
+              "type": "string"
+            },
+            {
+              "id": "cfg-007",
+              "name": "PANEL_SECRET",
+              "value": "CA_SECRET_2026_sad434435",
+              "type": "string"
+            },
+            {
+              "id": "cfg-008",
+              "name": "TERMOS_IGNORADOS",
+              "value": "murilo,murillo,instanciateste",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "62e52aec-2455-426e-902f-991d6b0d9eb7",
+      "name": "⚙️ CONFIG GLOBAL12",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4784,
+        12480
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-001",
+              "name": "ADMIN_TOKEN",
+              "value": "CLa2LD2E1AtLWWgw1HiCjvFxj3LAipXjBKizJRiQybEs5lM1mz",
+              "type": "string"
+            },
+            {
+              "id": "cfg-002",
+              "name": "BASE_URL",
+              "value": "https://zapx1analytics.uazapi.com",
+              "type": "string"
+            },
+            {
+              "id": "cfg-003",
+              "name": "NUMERO_NOTIFICACAO",
+              "value": "558398099916",
+              "type": "string"
+            },
+            {
+              "id": "cfg-004",
+              "name": "TOKEN_AVISOS",
+              "value": "00654d68-4fd9-4745-989a-b21d77878c25",
+              "type": "string"
+            },
+            {
+              "id": "cfg-005",
+              "name": "GRUPO_CONTINGENCIA",
+              "value": "120363420366289821@g.us",
+              "type": "string"
+            },
+            {
+              "id": "cfg-006",
+              "name": "PANEL_URL",
+              "value": "https://acessify.site/uazapi",
+              "type": "string"
+            },
+            {
+              "id": "cfg-007",
+              "name": "PANEL_SECRET",
+              "value": "CA_SECRET_2026_sad434435",
+              "type": "string"
+            },
+            {
+              "id": "cfg-008",
+              "name": "TERMOS_IGNORADOS",
+              "value": "murilo,murillo,instanciateste",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "77193d88-c2e4-4e0e-8963-639603bc1137",
+      "name": "⚙️ CONFIG GLOBAL11",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4784,
+        12256
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-001",
+              "name": "ADMIN_TOKEN",
+              "value": "CLa2LD2E1AtLWWgw1HiCjvFxj3LAipXjBKizJRiQybEs5lM1mz",
+              "type": "string"
+            },
+            {
+              "id": "cfg-002",
+              "name": "BASE_URL",
+              "value": "https://zapx1analytics.uazapi.com",
+              "type": "string"
+            },
+            {
+              "id": "cfg-003",
+              "name": "NUMERO_NOTIFICACAO",
+              "value": "558398099916",
+              "type": "string"
+            },
+            {
+              "id": "cfg-004",
+              "name": "TOKEN_AVISOS",
+              "value": "00654d68-4fd9-4745-989a-b21d77878c25",
+              "type": "string"
+            },
+            {
+              "id": "cfg-005",
+              "name": "GRUPO_CONTINGENCIA",
+              "value": "120363420366289821@g.us",
+              "type": "string"
+            },
+            {
+              "id": "cfg-006",
+              "name": "PANEL_URL",
+              "value": "https://acessify.site/uazapi",
+              "type": "string"
+            },
+            {
+              "id": "cfg-007",
+              "name": "PANEL_SECRET",
+              "value": "CA_SECRET_2026_sad434435",
+              "type": "string"
+            },
+            {
+              "id": "cfg-008",
+              "name": "TERMOS_IGNORADOS",
+              "value": "murilo,murillo,instanciateste",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "847389c1-b9a9-4a24-a0fc-9eea0faf1255",
+      "name": "⚙️ CONFIG GLOBAL10",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4784,
+        12016
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-001",
+              "name": "ADMIN_TOKEN",
+              "value": "CLa2LD2E1AtLWWgw1HiCjvFxj3LAipXjBKizJRiQybEs5lM1mz",
+              "type": "string"
+            },
+            {
+              "id": "cfg-002",
+              "name": "BASE_URL",
+              "value": "https://zapx1analytics.uazapi.com",
+              "type": "string"
+            },
+            {
+              "id": "cfg-003",
+              "name": "NUMERO_NOTIFICACAO",
+              "value": "558398099916",
+              "type": "string"
+            },
+            {
+              "id": "cfg-004",
+              "name": "TOKEN_AVISOS",
+              "value": "00654d68-4fd9-4745-989a-b21d77878c25",
+              "type": "string"
+            },
+            {
+              "id": "cfg-005",
+              "name": "GRUPO_CONTINGENCIA",
+              "value": "120363420366289821@g.us",
+              "type": "string"
+            },
+            {
+              "id": "cfg-006",
+              "name": "PANEL_URL",
+              "value": "https://acessify.site/uazapi",
+              "type": "string"
+            },
+            {
+              "id": "cfg-007",
+              "name": "PANEL_SECRET",
+              "value": "CA_SECRET_2026_sad434435",
+              "type": "string"
+            },
+            {
+              "id": "cfg-008",
+              "name": "TERMOS_IGNORADOS",
+              "value": "murilo,murillo,instanciateste",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e558c77f-5f1d-4057-927c-b4b0d8863c6e",
+      "name": "⚙️ CONFIG GLOBAL9",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4784,
+        11776
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-001",
+              "name": "ADMIN_TOKEN",
+              "value": "CLa2LD2E1AtLWWgw1HiCjvFxj3LAipXjBKizJRiQybEs5lM1mz",
+              "type": "string"
+            },
+            {
+              "id": "cfg-002",
+              "name": "BASE_URL",
+              "value": "https://zapx1analytics.uazapi.com",
+              "type": "string"
+            },
+            {
+              "id": "cfg-003",
+              "name": "NUMERO_NOTIFICACAO",
+              "value": "558398099916",
+              "type": "string"
+            },
+            {
+              "id": "cfg-004",
+              "name": "TOKEN_AVISOS",
+              "value": "00654d68-4fd9-4745-989a-b21d77878c25",
+              "type": "string"
+            },
+            {
+              "id": "cfg-005",
+              "name": "GRUPO_CONTINGENCIA",
+              "value": "120363420366289821@g.us",
+              "type": "string"
+            },
+            {
+              "id": "cfg-006",
+              "name": "PANEL_URL",
+              "value": "https://acessify.site/uazapi",
+              "type": "string"
+            },
+            {
+              "id": "cfg-007",
+              "name": "PANEL_SECRET",
+              "value": "CA_SECRET_2026_sad434435",
+              "type": "string"
+            },
+            {
+              "id": "cfg-008",
+              "name": "TERMOS_IGNORADOS",
+              "value": "murilo,murillo,instanciateste",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b377ae47-b64c-48e3-b65f-6a481884c63d",
+      "name": "⚙️ CONFIG GLOBAL8",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4784,
+        11552
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-001",
+              "name": "ADMIN_TOKEN",
+              "value": "CLa2LD2E1AtLWWgw1HiCjvFxj3LAipXjBKizJRiQybEs5lM1mz",
+              "type": "string"
+            },
+            {
+              "id": "cfg-002",
+              "name": "BASE_URL",
+              "value": "https://zapx1analytics.uazapi.com",
+              "type": "string"
+            },
+            {
+              "id": "cfg-003",
+              "name": "NUMERO_NOTIFICACAO",
+              "value": "558398099916",
+              "type": "string"
+            },
+            {
+              "id": "cfg-004",
+              "name": "TOKEN_AVISOS",
+              "value": "00654d68-4fd9-4745-989a-b21d77878c25",
+              "type": "string"
+            },
+            {
+              "id": "cfg-005",
+              "name": "GRUPO_CONTINGENCIA",
+              "value": "120363420366289821@g.us",
+              "type": "string"
+            },
+            {
+              "id": "cfg-006",
+              "name": "PANEL_URL",
+              "value": "https://acessify.site/uazapi",
+              "type": "string"
+            },
+            {
+              "id": "cfg-007",
+              "name": "PANEL_SECRET",
+              "value": "CA_SECRET_2026_sad434435",
+              "type": "string"
+            },
+            {
+              "id": "cfg-008",
+              "name": "TERMOS_IGNORADOS",
+              "value": "murilo,murillo,instanciateste",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "94bba5dd-303f-4454-bb78-b2dc9699111b",
+      "name": "⚙️ CONFIG GLOBAL2",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4784,
+        9248
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-001",
+              "name": "ADMIN_TOKEN",
+              "value": "CLa2LD2E1AtLWWgw1HiCjvFxj3LAipXjBKizJRiQybEs5lM1mz",
+              "type": "string"
+            },
+            {
+              "id": "cfg-002",
+              "name": "BASE_URL",
+              "value": "https://zapx1analytics.uazapi.com",
+              "type": "string"
+            },
+            {
+              "id": "cfg-003",
+              "name": "NUMERO_NOTIFICACAO",
+              "value": "558398099916",
+              "type": "string"
+            },
+            {
+              "id": "cfg-004",
+              "name": "TOKEN_AVISOS",
+              "value": "00654d68-4fd9-4745-989a-b21d77878c25",
+              "type": "string"
+            },
+            {
+              "id": "cfg-005",
+              "name": "GRUPO_CONTINGENCIA",
+              "value": "120363420366289821@g.us",
+              "type": "string"
+            },
+            {
+              "id": "cfg-006",
+              "name": "PANEL_URL",
+              "value": "https://acessify.site/uazapi",
+              "type": "string"
+            },
+            {
+              "id": "cfg-007",
+              "name": "PANEL_SECRET",
+              "value": "CA_SECRET_2026_sad434435",
+              "type": "string"
+            },
+            {
+              "id": "cfg-008",
+              "name": "TERMOS_IGNORADOS",
+              "value": "murilo,murillo,instanciateste",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "56f86df4-e054-45ac-aec1-d050db987844",
+      "name": "⚙️ CONFIG GLOBAL1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4784,
+        8688
+      ]
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 1280,
+        "width": 1472,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4464,
+        11440
+      ],
+      "typeVersion": 1,
+      "id": "0dd365f7-6c77-4eea-a584-6eda839ece63",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 928,
+        "width": 1232,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4464,
+        10288
+      ],
+      "typeVersion": 1,
+      "id": "3425757f-a67f-49c4-b9c5-5c2a7515e69f",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 336,
+        "width": 1712,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4464,
+        9728
+      ],
+      "typeVersion": 1,
+      "id": "59df9dab-3064-4180-b379-85b7c837d484",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 352,
+        "width": 1712,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4464,
+        9136
+      ],
+      "typeVersion": 1,
+      "id": "a91fc12e-35e3-451d-8cf8-21c279e8ffa3",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 352,
+        "width": 1712,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4464,
+        8576
+      ],
+      "typeVersion": 1,
+      "id": "7a300703-9620-4c13-b9d9-f49ab036ba15",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "# 📡 PROXY | 📋 DUPLICAR | 👤 PERFIL",
+        "height": 80,
+        "width": 1476,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4464,
+        11360
+      ],
+      "typeVersion": 1,
+      "id": "e0ecdb26-2f44-4d56-9365-5c66118b6c3d",
+      "name": "Nota Extras"
+    },
+    {
+      "parameters": {
+        "content": "# 🔁 RECONECTAR | ❌ DESCONECTAR | 🗑 EXCLUIR | 📋 LISTAR",
+        "height": 80,
+        "width": 1236,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4464,
+        10208
+      ],
+      "typeVersion": 1,
+      "id": "abd762c5-7b3d-400d-ab86-76b861a0909c",
+      "name": "Nota Ops"
+    },
+    {
+      "parameters": {
+        "content": "# ➕ CRIAR | Body: { instanceName, webhookUrl }",
+        "height": 80,
+        "width": 1708,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4464,
+        9648
+      ],
+      "typeVersion": 1,
+      "id": "c90767c0-175c-4d98-a3d0-567576ba2f70",
+      "name": "Nota Criar"
+    },
+    {
+      "parameters": {
+        "content": "# 🔔 CONFIRMA CONEXÃO\nRecebe evento da Uazapi quando instância conecta.",
+        "height": 100,
+        "width": 1716,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4464,
+        9040
+      ],
+      "typeVersion": 1,
+      "id": "584253a1-7488-4aa1-8ade-e4479c7d4bf4",
+      "name": "Nota Conexão"
+    },
+    {
+      "parameters": {
+        "content": "# 🚨 MONITOR DE DESCONEXÃO\nRoda a cada 30 min. Instâncias offline → alerta no GRUPO DE CONTINGÊNCIA.\nIgnora termos em TERMOS_IGNORADOS.",
+        "height": 116,
+        "width": 1708,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4464,
+        8464
+      ],
+      "typeVersion": 1,
+      "id": "f5ac24ce-b2cf-40e1-af63-960f9a79188f",
+      "name": "Nota Monitor"
+    },
+    {
+      "parameters": {
+        "content": "# ⚙️ CONFIG GLOBAL\nAltere os valores antes de usar.\n🔑 ADMIN_TOKEN → gerenciar instâncias\n🔑 TOKEN_AVISOS → enviar alertas\n📞 NUMERO_NOTIFICACAO → número pessoal\n🔗 PANEL_URL → https://acessify.site/uazapi\n🔑 PANEL_SECRET → mesma chave do config.php",
+        "height": 220,
+        "width": 420,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        5072,
+        8064
+      ],
+      "typeVersion": 1,
+      "id": "63ca3873-37b7-4628-9d49-115a02d2396a",
+      "name": "Nota Config"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('⚙️ CONFIG GLOBAL').item.json.BASE_URL }}/instance/all",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "admintoken",
+              "value": "={{ $('⚙️ CONFIG GLOBAL').item.json.ADMIN_TOKEN }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ad890ada-a4d7-4986-b522-26935ff90f30",
+      "name": "📡 API: Listar1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5008,
+        10992
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "criar-instancia",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "1e172c80-e8e2-45a7-8336-822b8bd56efe",
+      "name": "🌐 Webhook: Criar1",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        4576,
+        9840
+      ],
+      "webhookId": "wh-criar-001"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('⚙️ CONFIG GLOBAL13').item.json.BASE_URL }}/instance/init",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "admintoken",
+              "value": "={{ $('⚙️ CONFIG GLOBAL13').item.json.ADMIN_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $node[\"🌐 Webhook: Criar1\"].json[\"body\"][\"name\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "14245b09-3a26-46b1-98fa-fdcc1c0dd3b7",
+      "name": "📡 API: Criar1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5024,
+        9840
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('⚙️ CONFIG GLOBAL13').item.json.BASE_URL }}/webhook",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $json.instance?.token || $json.hash }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"enabled\": true,\n  \"url\": \"{{ $('🌐 Webhook: Criar1').item.json.webhookUrl }}\",\n  \"events\": [\n    \"messages\",\n    \"labels\",\n    \"chat_labels\"\n  ],\n  \"excludeMessages\": [\n    \"isfrommeyes\",\n    \"isgroupyes\"\n  ],\n  \"addUrlEvents\": false\n}",
+        "options": {}
+      },
+      "id": "8be94005-4f44-4bdc-afd6-940af1f49f70",
+      "name": "🔗 Config Webhook1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        5264,
+        9840
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('⚙️ CONFIG GLOBAL13').item.json.BASE_URL }}/instance/connect",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $('📡 API: Criar1').first().json.instance?.token || $('📡 API: Criar1').first().json.hash }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "53c61b9e-9517-44ce-913f-1a6ef61b1dba",
+      "name": "🔌 Conectar1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        5504,
+        9840
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nconst qr = (item.json?.instance?.qrcode || item.json?.qrcode || item.json?.base64 || '').replace(/^data:image\\/png;base64,/, '');\nconst initNode = $('📡 API: Criar1').first();\nconst token = initNode?.json?.instance?.token || initNode?.json?.hash || '';\nconst webhookNode = $('🌐 Webhook: Criar1').first();\nconst nome = webhookNode?.json?.body?.instanceName || 'Nova Instancia';\n\nreturn [{ json: { success: true, instanceName: nome, token: token, qrCodeBase64: qr, message: `Instância '${nome}' criada! Escaneie o QR.` } }];"
+      },
+      "id": "4265c087-9770-4441-8f61-ef8703266cbe",
+      "name": "📋 Montar QR1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5744,
+        9840
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "59efe194-7621-413c-a868-7eeadc6aa976",
+      "name": "✅ Resposta: Criada1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        5984,
+        9840
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('⚙️ CONFIG GLOBAL14').item.json.BASE_URL }}/instance/connect",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $node[\"🌐 Webhook: Reconectar\"].json[\"body\"][\"token\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "35f8b571-00ed-494a-80cb-1888e38be278",
+      "name": "📡 API: Reconectar1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        5008,
+        10400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nconst st = item.json?.instance?.state || item.json?.state || item.json?.status || '';\nif (st === 'open' || st === 'connected' || st === 'connecting') {\n    return [{ json: { success: true, connected: true, qrCodeBase64: '', message: 'Instância já está conectada.' } }];\n}\nconst qr = (item.json?.instance?.qrcode || item.json?.qrcode || item.json?.base64 || '').replace(/^data:image\\/png;base64,/,'');\nreturn [{ json: { success: true, qrCodeBase64: qr, message: 'QR gerado. Escaneie para reconectar.' } }];"
+      },
+      "id": "f01a7251-b4e4-406a-b44c-fb05fbe69207",
+      "name": "📋 QR Reconexão1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5248,
+        10400
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "c065879d-02f7-4b26-9656-caea6b00a145",
+      "name": "✅ Resposta: QR1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        5488,
+        10400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('⚙️ CONFIG GLOBAL15').item.json.BASE_URL }}/instance/disconnect",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $node[\"🌐 Webhook: Desconectar\"].json[\"body\"][\"token\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "40709c84-e7c7-41df-bf7d-23db47c7ca32",
+      "name": "📡 API: Desconectar1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5008,
+        10592
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, message: 'Desconectado.', data: $input.first().json } }}",
+        "options": {}
+      },
+      "id": "6a95fc2c-2274-42c0-81ef-7dc23959c698",
+      "name": "✅ Resposta: Desconectado1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        5248,
+        10592
+      ]
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "={{ $('⚙️ CONFIG GLOBAL16').item.json.BASE_URL }}/instance",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $node[\"🌐 Webhook: Excluir\"].json[\"body\"][\"token\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "75a879e2-dfa5-4491-bbd2-eaba3fad1260",
+      "name": "📡 API: Excluir1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5008,
+        10800
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, message: 'Excluída.', data: $input.first().json } }}",
+        "options": {}
+      },
+      "id": "91193ea8-42f4-498a-8d7e-fda387f6074a",
+      "name": "✅ Resposta: Excluído1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        5248,
+        10800
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-001",
+              "name": "ADMIN_TOKEN",
+              "value": "CLa2LD2E1AtLWWgw1HiCjvFxj3LAipXjBKizJRiQybEs5lM1mz",
+              "type": "string"
+            },
+            {
+              "id": "cfg-002",
+              "name": "BASE_URL",
+              "value": "https://zapx1analytics.uazapi.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fed71411-264c-4458-9a6d-8a16db7d47d1",
+      "name": "⚙️ CONFIG GLOBAL",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4784,
+        10992
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-001",
+              "name": "ADMIN_TOKEN",
+              "value": "CLa2LD2E1AtLWWgw1HiCjvFxj3LAipXjBKizJRiQybEs5lM1mz",
+              "type": "string"
+            },
+            {
+              "id": "cfg-002",
+              "name": "BASE_URL",
+              "value": "https://zapx1analytics.uazapi.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2536bd5a-7ef8-448f-9493-dd02dafe7d74",
+      "name": "⚙️ CONFIG GLOBAL13",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4800,
+        9840
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-001",
+              "name": "ADMIN_TOKEN",
+              "value": "CLa2LD2E1AtLWWgw1HiCjvFxj3LAipXjBKizJRiQybEs5lM1mz",
+              "type": "string"
+            },
+            {
+              "id": "cfg-002",
+              "name": "BASE_URL",
+              "value": "https://zapx1analytics.uazapi.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c0a4dcd3-6edf-425c-b0cb-ed648ab8083a",
+      "name": "⚙️ CONFIG GLOBAL14",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4784,
+        10400
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-001",
+              "name": "ADMIN_TOKEN",
+              "value": "CLa2LD2E1AtLWWgw1HiCjvFxj3LAipXjBKizJRiQybEs5lM1mz",
+              "type": "string"
+            },
+            {
+              "id": "cfg-002",
+              "name": "BASE_URL",
+              "value": "https://zapx1analytics.uazapi.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "25302e52-3751-40f2-95a0-a2c683a43092",
+      "name": "⚙️ CONFIG GLOBAL15",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4784,
+        10592
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-001",
+              "name": "ADMIN_TOKEN",
+              "value": "CLa2LD2E1AtLWWgw1HiCjvFxj3LAipXjBKizJRiQybEs5lM1mz",
+              "type": "string"
+            },
+            {
+              "id": "cfg-002",
+              "name": "BASE_URL",
+              "value": "https://zapx1analytics.uazapi.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "113cc895-3bc0-4c62-9885-7fb9076a4233",
+      "name": "⚙️ CONFIG GLOBAL16",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4784,
+        10800
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "reconectar",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "4480064d-e72e-4ba3-8510-36878dfdc51c",
+      "name": "🌐 Webhook: Reconectar",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        4576,
+        10400
+      ],
+      "webhookId": "wh-recon-001"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "desconectar",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "c887bbae-d7a0-4615-8541-83e8d7d0e697",
+      "name": "🌐 Webhook: Desconectar",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        4576,
+        10592
+      ],
+      "webhookId": "wh-descon-001"
+    },
+    {
+      "parameters": {
+        "httpMethod": "DELETE",
+        "path": "excluir-instancia",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "1f1cd724-6629-4548-b7a8-942f8198be8d",
+      "name": "🌐 Webhook: Excluir",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        4576,
+        10800
+      ],
+      "webhookId": "wh-excluir-001"
+    },
+    {
+      "parameters": {
+        "path": "listar-instancias",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "5852f7f3-cbba-42e5-995d-0ce12275755d",
+      "name": "🌐 Webhook: Listar",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        4576,
+        10992
+      ],
+      "webhookId": "wh-listar-001"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "webhook-set",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "029e24f2-dde4-4c65-8469-75a17415ce09",
+      "name": "🌐 Webhook: Set Webhook Config",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        4544,
+        13264
+      ],
+      "webhookId": "wh-set-config-001"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-001",
+              "name": "ADMIN_TOKEN",
+              "value": "CLa2LD2E1AtLWWgw1HiCjvFxj3LAipXjBKizJRiQybEs5lM1mz",
+              "type": "string"
+            },
+            {
+              "id": "cfg-002",
+              "name": "BASE_URL",
+              "value": "https://zapx1analytics.uazapi.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "050929f9-03a0-47fd-8035-ac5596efbbd8",
+      "name": "⚙️ CONFIG WH SET",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4752,
+        13264
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('⚙️ CONFIG WH SET').item.json.BASE_URL }}/webhook",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $node[\"🌐 Webhook: Set Webhook Config\"].json[\"body\"][\"token\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n  {\n    enabled: $('🌐 Webhook: Set Webhook Config').item.json.body.enabled,\n    url: $('🌐 Webhook: Set Webhook Config').item.json.body.url,\n    events: $('🌐 Webhook: Set Webhook Config').item.json.body.events,\n    excludeMessages: $('🌐 Webhook: Set Webhook Config').item.json.body.excludeMessages,\n    addUrlEvents: $('🌐 Webhook: Set Webhook Config').item.json.body.addUrlEvents,\n    addUrlTypeMessages: $('🌐 Webhook: Set Webhook Config').item.json.body.addUrlTypeMessages\n  }\n}}",
+        "options": {}
+      },
+      "id": "b9abd19d-8c66-43db-8125-c672fbf43679",
+      "name": "📡 API: Set Webhook",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4976,
+        13264
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, data: $json } }}",
+        "options": {}
+      },
+      "id": "655686ce-3fa9-44b1-a8c8-33e51263c122",
+      "name": "✅ Resposta: Set Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        5216,
+        13264
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# ⚡ WEBHOOK GET/SET\nGET — busca config atual do webhook da instância\nSET — salva enabled, url, events, excludeMessages, addUrlEvents, addUrlTypeMessages",
+        "height": 120,
+        "width": 952,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4464,
+        12832
+      ],
+      "typeVersion": 1,
+      "id": "c6e00d84-22c3-41c8-8ed1-b21b0fc5ddc4",
+      "name": "Nota Webhook Manager"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 528,
+        "width": 944,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4464,
+        12944
+      ],
+      "typeVersion": 1,
+      "id": "b3299060-de3f-434d-a419-f9d76a858fb4",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, total: $input.all().length, data: $input.all().map(i => i.json) } }}",
+        "options": {}
+      },
+      "id": "3042fb61-5bbd-4782-9fcb-e0bdc566faf3",
+      "name": "✅ Resposta: Lista",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        5248,
+        10992
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-001",
+              "name": "ADMIN_TOKEN",
+              "value": "CLa2LD2E1AtLWWgw1HiCjvFxj3LAipXjBKizJRiQybEs5lM1mz",
+              "type": "string"
+            },
+            {
+              "id": "cfg-002",
+              "name": "BASE_URL",
+              "value": "https://zapx1analytics.uazapi.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "43a76691-8b83-4c47-9ce8-edc75b6c9273",
+      "name": "⚙️ CONFIG",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4752,
+        13040
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "webhook-get",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "73b194e3-7470-40f1-9a66-f176f775eb7d",
+      "name": "🌐 Webhook: Get Webhook Config",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        4544,
+        13040
+      ],
+      "webhookId": "wh-get-config-001"
+    },
+    {
+      "parameters": {
+        "url": "={{ $node[\"⚙️ CONFIG\"].json.BASE_URL }}/webhook",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $node[\"🌐 Webhook: Get Webhook Config\"].json.body.token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bf0eb4fa-0908-44d0-9593-1871b54a17e3",
+      "name": "📡 API: Get Webhook",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4976,
+        13040
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, data: $json } }}",
+        "options": {}
+      },
+      "id": "63332516-9f6b-4834-bc51-f85d200f7fd7",
+      "name": "✅ Resposta: Get",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        5216,
+        13040
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# 🌐 VERIFICAR CONEXÕES E PROXY\nGET /proxy-get (Retorna os dados da proxy da instância)\nPOST /testar-webhook (Dispara um evento de teste para a URL)",
+        "height": 116,
+        "width": 952,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        6000,
+        11360
+      ],
+      "typeVersion": 1,
+      "id": "606c18d3-474b-4d90-a400-2dc096d4605e",
+      "name": "Nota Verificacoes"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 500,
+        "width": 944,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        6000,
+        11472
+      ],
+      "typeVersion": 1,
+      "id": "69c40a48-c819-4062-9a45-0ca98a94bd78",
+      "name": "Fundo Cinza Verificacoes"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "proxy-get",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "678af3b7-e4f5-4152-9720-334b567e0712",
+      "name": "🌐 Webhook: Proxy Get",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        6080,
+        11552
+      ],
+      "webhookId": "wh-proxy-get-001"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-001",
+              "name": "ADMIN_TOKEN",
+              "value": "CLa2LD2E1AtLWWgw1HiCjvFxj3LAipXjBKizJRiQybEs5lM1mz",
+              "type": "string"
+            },
+            {
+              "id": "cfg-002",
+              "name": "BASE_URL",
+              "value": "https://zapx1analytics.uazapi.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "744ca3cb-1e55-4c5d-b184-3c121adae8e8",
+      "name": "⚙️ CONFIG PROXY GET",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6304,
+        11552
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('⚙️ CONFIG PROXY GET').item.json.BASE_URL }}/instance/proxy",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $node[\"🌐 Webhook: Proxy Get\"].json[\"body\"][\"token\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "25d5c12d-159a-41d1-8d44-ab7054fe3316",
+      "name": "📡 API: Obter Proxy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        6528,
+        11552
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, data: $json } }}",
+        "options": {}
+      },
+      "id": "41a238bd-6459-40bc-883d-c2a5efe15391",
+      "name": "✅ Resposta: Proxy Get",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        6768,
+        11552
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "testar-webhook",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "9fe32276-b580-4fe8-80e7-bc2657f29ce5",
+      "name": "🌐 Webhook: Testar Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        6080,
+        11744
+      ],
+      "webhookId": "wh-test-webhook-001"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $node[\"🌐 Webhook: Testar Webhook\"].json[\"body\"][\"url\"] }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"event\":\"connection.update\",\"instance\":\"Teste-Painel\",\"data\":{\"state\":\"open\",\"statusReason\":200},\"message\":\"Ping de teste do Painel WAZ.IO\"}",
+        "options": {}
+      },
+      "id": "dcb4739e-2eb0-4904-915f-050a56cc4d5a",
+      "name": "📡 HTTP: Disparar Teste",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        6304,
+        11744
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, msg: 'Webhook testado com sucesso', response: $json } }}",
+        "options": {}
+      },
+      "id": "cf9b1317-9c29-4335-888f-8610a32a09f1",
+      "name": "✅ Resposta: Teste WH",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        6528,
+        11744
+      ]
+    }
+  ],
+  "pinData": {
+    "🌐 Webhook: Criar1": [
+      {
+        "json": {
+          "headers": {
+            "host": "criadordigital-n8n-webhook.wjcc6z.easypanel.host",
+            "content-length": "124",
+            "accept": "*/*",
+            "content-type": "application/json",
+            "x-forwarded-for": "159.223.138.108",
+            "x-forwarded-host": "criadordigital-n8n-webhook.wjcc6z.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "649e019c1794",
+            "x-real-ip": "159.223.138.108",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "name": "02_chip_campanha",
+            "webhookUrl": "https://criadordigital-n8n-webhook.wjcc6z.easypanel.host/webhook/block-delete"
+          },
+          "webhookUrl": "https://criadordigital-n8n-webhook.wjcc6z.easypanel.host/webhook/criar-instancia",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "📡 API: Perfil Foto": {
+      "main": [
+        [
+          {
+            "node": "✅ Resposta: Foto Perfil",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌐 Webhook: Perfil Foto": {
+      "main": [
+        [
+          {
+            "node": "⚙️ CONFIG GLOBAL12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📡 API: Perfil Nome": {
+      "main": [
+        [
+          {
+            "node": "✅ Resposta: Nome Perfil",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌐 Webhook: Perfil Nome": {
+      "main": [
+        [
+          {
+            "node": "⚙️ CONFIG GLOBAL11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📋 QR Duplicada": {
+      "main": [
+        [
+          {
+            "node": "✅ Resposta: Duplicada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔌 Duplicar: Conectar": {
+      "main": [
+        [
+          {
+            "node": "📋 QR Duplicada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📡 API: Duplicar Init": {
+      "main": [
+        [
+          {
+            "node": "🔌 Duplicar: Conectar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌐 Webhook: Duplicar": {
+      "main": [
+        [
+          {
+            "node": "⚙️ CONFIG GLOBAL10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📡 API: Proxy Del": {
+      "main": [
+        [
+          {
+            "node": "✅ Resposta: Proxy Del",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌐 Webhook: Proxy Del": {
+      "main": [
+        [
+          {
+            "node": "⚙️ CONFIG GLOBAL9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📡 API: Proxy Set": {
+      "main": [
+        [
+          {
+            "node": "✅ Resposta: Proxy Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌐 Webhook: Proxy Set": {
+      "main": [
+        [
+          {
+            "node": "⚙️ CONFIG GLOBAL8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📢 Confirmar Conexão no Grupo": {
+      "main": [
+        [
+          {
+            "node": "✅ Resposta Imediata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔎 Instância Bate?": {
+      "main": [
+        [
+          {
+            "node": "📢 Confirmar Conexão no Grupo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📂 Separar Dados": {
+      "main": [
+        [
+          {
+            "node": "🔎 Instância Bate?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📡 Buscar Instâncias Evento": {
+      "main": [
+        [
+          {
+            "node": "📂 Separar Dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌐 Webhook: Evento Uazapi": {
+      "main": [
+        [
+          {
+            "node": "⚙️ CONFIG GLOBAL2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📊 Notificar Painel PHP": {
+      "main": [
+        [
+          {
+            "node": "📲 Notificar Proprietário",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📢 Alertar Grupo Contingência": {
+      "main": [
+        [
+          {
+            "node": "📊 Notificar Painel PHP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔍 Filtrar Offline": {
+      "main": [
+        [
+          {
+            "node": "📢 Alertar Grupo Contingência",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📡 Buscar Todas Instâncias": {
+      "main": [
+        [
+          {
+            "node": "🔍 Filtrar Offline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⏰ A cada 30 min": {
+      "main": [
+        [
+          {
+            "node": "⚙️ CONFIG GLOBAL1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚙️ CONFIG GLOBAL12": {
+      "main": [
+        [
+          {
+            "node": "📡 API: Perfil Foto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚙️ CONFIG GLOBAL11": {
+      "main": [
+        [
+          {
+            "node": "📡 API: Perfil Nome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚙️ CONFIG GLOBAL10": {
+      "main": [
+        [
+          {
+            "node": "📡 API: Duplicar Init",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚙️ CONFIG GLOBAL9": {
+      "main": [
+        [
+          {
+            "node": "📡 API: Proxy Del",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚙️ CONFIG GLOBAL8": {
+      "main": [
+        [
+          {
+            "node": "📡 API: Proxy Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚙️ CONFIG GLOBAL2": {
+      "main": [
+        [
+          {
+            "node": "📡 Buscar Instâncias Evento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚙️ CONFIG GLOBAL1": {
+      "main": [
+        [
+          {
+            "node": "📡 Buscar Todas Instâncias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📡 API: Listar1": {
+      "main": [
+        [
+          {
+            "node": "✅ Resposta: Lista",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌐 Webhook: Criar1": {
+      "main": [
+        [
+          {
+            "node": "⚙️ CONFIG GLOBAL13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📡 API: Criar1": {
+      "main": [
+        [
+          {
+            "node": "🔗 Config Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔗 Config Webhook1": {
+      "main": [
+        [
+          {
+            "node": "🔌 Conectar1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔌 Conectar1": {
+      "main": [
+        [
+          {
+            "node": "📋 Montar QR1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📋 Montar QR1": {
+      "main": [
+        [
+          {
+            "node": "✅ Resposta: Criada1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📡 API: Reconectar1": {
+      "main": [
+        [
+          {
+            "node": "📋 QR Reconexão1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📋 QR Reconexão1": {
+      "main": [
+        [
+          {
+            "node": "✅ Resposta: QR1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📡 API: Desconectar1": {
+      "main": [
+        [
+          {
+            "node": "✅ Resposta: Desconectado1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📡 API: Excluir1": {
+      "main": [
+        [
+          {
+            "node": "✅ Resposta: Excluído1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚙️ CONFIG GLOBAL": {
+      "main": [
+        [
+          {
+            "node": "📡 API: Listar1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚙️ CONFIG GLOBAL13": {
+      "main": [
+        [
+          {
+            "node": "📡 API: Criar1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚙️ CONFIG GLOBAL14": {
+      "main": [
+        [
+          {
+            "node": "📡 API: Reconectar1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚙️ CONFIG GLOBAL15": {
+      "main": [
+        [
+          {
+            "node": "📡 API: Desconectar1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚙️ CONFIG GLOBAL16": {
+      "main": [
+        [
+          {
+            "node": "📡 API: Excluir1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌐 Webhook: Reconectar": {
+      "main": [
+        [
+          {
+            "node": "⚙️ CONFIG GLOBAL14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌐 Webhook: Desconectar": {
+      "main": [
+        [
+          {
+            "node": "⚙️ CONFIG GLOBAL15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌐 Webhook: Excluir": {
+      "main": [
+        [
+          {
+            "node": "⚙️ CONFIG GLOBAL16",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌐 Webhook: Listar": {
+      "main": [
+        [
+          {
+            "node": "⚙️ CONFIG GLOBAL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌐 Webhook: Set Webhook Config": {
+      "main": [
+        [
+          {
+            "node": "⚙️ CONFIG WH SET",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚙️ CONFIG WH SET": {
+      "main": [
+        [
+          {
+            "node": "📡 API: Set Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📡 API: Set Webhook": {
+      "main": [
+        [
+          {
+            "node": "✅ Resposta: Set Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌐 Webhook: Get Webhook Config": {
+      "main": [
+        [
+          {
+            "node": "⚙️ CONFIG",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚙️ CONFIG": {
+      "main": [
+        [
+          {
+            "node": "📡 API: Get Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📡 API: Get Webhook": {
+      "main": [
+        [
+          {
+            "node": "✅ Resposta: Get",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌐 Webhook: Proxy Get": {
+      "main": [
+        [
+          {
+            "node": "⚙️ CONFIG PROXY GET",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚙️ CONFIG PROXY GET": {
+      "main": [
+        [
+          {
+            "node": "📡 API: Obter Proxy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📡 API: Obter Proxy": {
+      "main": [
+        [
+          {
+            "node": "✅ Resposta: Proxy Get",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌐 Webhook: Testar Webhook": {
+      "main": [
+        [
+          {
+            "node": "📡 HTTP: Disparar Teste",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📡 HTTP: Disparar Teste": {
+      "main": [
+        [
+          {
+            "node": "✅ Resposta: Teste WH",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e58d0212-ac32-447b-baf3-a2046b18efa0",
+  "meta": {
+    "instanceId": "d924bab2d769f916cedee4b95c153db11fb5441ce83b7e05b43cf209af2ace55"
+  },
+  "id": "4Toao6nB5Vvcnrmv",
+  "tags": []
+}

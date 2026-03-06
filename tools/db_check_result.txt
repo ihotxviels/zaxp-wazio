@@ -1,0 +1,16 @@
+Connected to Server: 137.184.202.248
+Target Database: criadordigital
+Actual connected DB: criadordigital
+
+All Tables in criadordigital:
+- public.crm_checkout
+- public.crm_chips
+- public.crm_contacts
+- public.crm_finance
+- public.crm_funnel_progress
+- public.crm_funnels
+- public.crm_instances
+- public.crm_labels
+- public.crm_messages
+- public.crm_remarketing
+- public.crm_system_logs

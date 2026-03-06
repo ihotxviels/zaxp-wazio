@@ -1,0 +1,36 @@
+LOG DE TESTE DB SYNC - 2026-03-02 23:12:08
+--------------------------------------------------
+DB Connected Successfully!
+DB Info: {"current_user":"postgres","current_database":"criadordigital"}
+Running sync_all_uazapi_instances()...
+Sync Status: SUCCESS
+Instances Found: 28
+Stats: {"updated":0,"inserted":0,"errors":28}
+Sample DB Rows:
+[
+    {
+        "instance_name": "chip_atendimento17",
+        "status": "connected",
+        "last_checked": "2026-03-02 19:38:42.098652"
+    },
+    {
+        "instance_name": "chip_atendimento20",
+        "status": "connected",
+        "last_checked": "2026-03-02 19:38:44.364159"
+    },
+    {
+        "instance_name": "68_chip_campanha",
+        "status": "connected",
+        "last_checked": "2026-03-02 19:39:10.716861"
+    },
+    {
+        "instance_name": "chip_atendimento01",
+        "status": "connected",
+        "last_checked": "2026-03-02 19:38:46.657129"
+    },
+    {
+        "instance_name": "chip_grupoparticipantes",
+        "status": "connected",
+        "last_checked": "2026-03-02 19:38:48.944137"
+    }
+]

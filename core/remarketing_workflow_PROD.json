@@ -1,0 +1,413 @@
+{
+    "name": "uazapi_remarketing_v2_5_prod",
+    "nodes": [
+        {
+            "parameters": {
+                "content": "## 📊 REMARKETING PENDENTES v2.5\n### Filtra PAGO vs PENDENTE dinamicamente por instância",
+                "height": 80,
+                "width": 2720,
+                "color": 3
+            },
+            "id": "b1d92290-cd97-4c7e-ac50-a5511ef0f883",
+            "name": "Header1",
+            "type": "n8n-nodes-base.stickyNote",
+            "typeVersion": 1,
+            "position": [
+                0,
+                624
+            ]
+        },
+        {
+            "parameters": {
+                "content": "",
+                "height": 500,
+                "width": 2720,
+                "color": 7
+            },
+            "type": "n8n-nodes-base.stickyNote",
+            "position": [
+                0,
+                704
+            ],
+            "id": "dc7a6916-3cd6-4dc9-9014-60c1d0c9692d",
+            "name": "Sticky Note - Instâncias Back1",
+            "typeVersion": 1
+        },
+        {
+            "parameters": {},
+            "id": "66b28abe-486b-43f9-9db0-c107b20e7291",
+            "name": "Manual Trigger",
+            "type": "n8n-nodes-base.manualTrigger",
+            "typeVersion": 1,
+            "position": [
+                112,
+                832
+            ]
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "url",
+                            "name": "server_url",
+                            "value": "https://zapx1analytics.uazapi.com",
+                            "type": "string"
+                        },
+                        {
+                            "id": "tok",
+                            "name": "admin_token",
+                            "value": "CLa2LD2E1AtLWWgw1HiCjvFxj3LAipXjBKizJRiQybEs5lM1mz",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "6cbbae19-8256-4286-9ab7-b0f9f67a4020",
+            "name": "Config Global",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+                320,
+                832
+            ]
+        },
+        {
+            "parameters": {
+                "url": "={{ $node[\"Config Global\"].json.server_url }}/instance/all",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "admintoken",
+                            "value": "={{ $node[\"Config Global\"].json.admin_token }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "node_get_all_instances",
+            "name": "[HTTP] Get Instances",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                520,
+                832
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "const regex = /^chip_atendimento\\d+$/i;\nreturn $input.all().filter(item => \n  regex.test(item.json.name) && \n  item.json.status === 'connected'\n);"
+            },
+            "id": "node_filtro_connected",
+            "name": "Filtro Conectados",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                720,
+                832
+            ]
+        },
+        {
+            "parameters": {
+                "batchSize": 1,
+                "options": {}
+            },
+            "id": "82aa9089-ab03-4efd-8a2b-0dd00ee7bcb7",
+            "name": "Loop 1 - Instâncias",
+            "type": "n8n-nodes-base.splitInBatches",
+            "typeVersion": 3,
+            "position": [
+                920,
+                832
+            ]
+        },
+        {
+            "parameters": {
+                "url": "={{ $node[\"Config Global\"].json.server_url }}/labels",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "token",
+                            "value": "={{ $json.token }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "11904c47-f7d6-40e6-b380-be36d63b5391",
+            "name": "[HTTP] Get Labels",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                1140,
+                970
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "const labels = $input.all().map(item => item.json);\nconst instanceName = $node[\"Loop 1 - Instâncias\"].json.name;\nconst normalize = (text) => (text || \"\").replace(/[\\u{1F600}-\\u{1F64F}\\u{1F300}-\\u{1F5FF}\\u{1F680}-\\u{1F6FF}\\u{2600}-\\u{26FF}\\u{2700}-\u{27BF}]/gu, '').toUpperCase().trim();\nconst pagoMeta = labels.filter(l => { const n = normalize(l.name); return n.includes('PAGO') && !n.includes('PENDENTE'); });\nconst pendenteMeta = labels.filter(l => { const n = normalize(l.name); return n.includes('PENDENTE') || n.includes('GERAR') || n.includes('AGUARDANDO'); });\nreturn [{ json: { ...$node[\"Loop 1 - Instâncias\"].json, pago_ids: pagoMeta.map(l => String(l.labelid || l.id || '').split(':').pop()), pago_names: pagoMeta.map(l => l.name), pendente_ids: pendenteMeta.map(l => String(l.labelid || l.id || '').split(':').pop()), pendente_names: pendenteMeta.map(l => l.name) } }];"
+            },
+            "id": "bfa6ac5c-6549-4019-a7b9-7cda4d6b8ff7",
+            "name": "Code - Mapear IDs",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1340,
+                970
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "={{ $node[\"Config Global\"].json.server_url }}/chat/find",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "token",
+                            "value": "={{ $json.token }}"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "{\"operator\": \"AND\", \"sort\": \"-wa_lastMsgTimestamp\", \"limit\": 5000, \"wa_isGroup\": false}",
+                "options": {}
+            },
+            "id": "ae79d61a-b3de-4a12-a3f7-f586a0e82cf9",
+            "name": "[HTTP] Busca Chats",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                1540,
+                970
+            ]
+        },
+        {
+            "parameters": {
+                "fieldToSplitOut": "chats",
+                "options": {}
+            },
+            "id": "0f385057-82fd-441c-95e4-b2cda028bfbb",
+            "name": "Separar Chats",
+            "type": "n8n-nodes-base.splitOut",
+            "typeVersion": 1,
+            "position": [
+                1740,
+                970
+            ]
+        },
+        {
+            "parameters": {
+                "batchSize": 100,
+                "options": {}
+            },
+            "id": "9923df33-824b-4e14-bbdd-c31ee003c619",
+            "name": "Loop 2 - Leads",
+            "type": "n8n-nodes-base.splitInBatches",
+            "typeVersion": 3,
+            "position": [
+                1940,
+                970
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "boolean": [
+                        {
+                            "value1": "={{ (() => { const meta = $node[\"Code - Mapear IDs\"].json; const chatLabelsRaw = $json.wa_label || []; const chatLabelsNormalized = chatLabelsRaw.map(l => { const val = typeof l === 'object' ? (l.id || l.name || '') : String(l); return val.split(':').pop().toUpperCase(); }); const hasPendente = chatLabelsNormalized.some(l => meta.pendente_ids.includes(l) || meta.pendente_names.some(name => name.includes(l))); const hasPago = chatLabelsNormalized.some(l => meta.pago_ids.includes(l) || meta.pago_names.some(name => name.includes(l))); return hasPendente && !hasPago; })() }}",
+                            "value2": true,
+                            "operator": "equals"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "6d2d2702-0775-4514-96dd-337155026cf2",
+            "name": "IF - Só Pendente?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
+            "position": [
+                2140,
+                970
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "INSERT INTO remarketing_pendentes (instance_name, phone, name)\r\nVALUES ($1, $2, $3)\r\nON CONFLICT (instance_name, phone) \r\nDO UPDATE SET last_interaction = NOW();",
+                "options": {
+                    "queryReplacement": "={{ [$node[\"Loop 1 - Instâncias\"].json.name, ($json.wa_chatid || $json.owner || \"\").split('@')[0], ($json.name || $json.lead_name || 'Lead')] }}"
+                }
+            },
+            "id": "844e1ad8-b447-432e-aa9f-c6206a9845e1",
+            "name": "[PG] Salva Pendente",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.6,
+            "position": [
+                2340,
+                880
+            ]
+        }
+    ],
+    "connections": {
+        "Manual Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Config Global",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Config Global": {
+            "main": [
+                [
+                    {
+                        "node": "[HTTP] Get Instances",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[HTTP] Get Instances": {
+            "main": [
+                [
+                    {
+                        "node": "Filtro Conectados",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Filtro Conectados": {
+            "main": [
+                [
+                    {
+                        "node": "Loop 1 - Instâncias",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Loop 1 - Instâncias": {
+            "main": [
+                [],
+                [
+                    {
+                        "node": "[HTTP] Get Labels",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[HTTP] Get Labels": {
+            "main": [
+                [
+                    {
+                        "node": "Code - Mapear IDs",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Code - Mapear IDs": {
+            "main": [
+                [
+                    {
+                        "node": "[HTTP] Busca Chats",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[HTTP] Busca Chats": {
+            "main": [
+                [
+                    {
+                        "node": "Separar Chats",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Separar Chats": {
+            "main": [
+                [
+                    {
+                        "node": "Loop 2 - Leads",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Loop 2 - Leads": {
+            "main": [
+                [
+                    {
+                        "node": "Loop 1 - Instâncias",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "IF - Só Pendente?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "IF - Só Pendente?": {
+            "main": [
+                [
+                    {
+                        "node": "[PG] Salva Pendente",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Loop 2 - Leads",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[PG] Salva Pendente": {
+            "main": [
+                [
+                    {
+                        "node": "Loop 2 - Leads",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1"
+    },
+    "meta": {
+        "instanceId": "d924bab2d769f916cedee4b95c153db11fb5441ce83b7e05b43cf209af2ace55",
+        "templateCredsSetupCompleted": true
+    }
+}

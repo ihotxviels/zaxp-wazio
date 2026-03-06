@@ -1,0 +1,364 @@
+{
+    "name": "🤖 [UAZAPI] VERIFICADOR JA PAGOU E BLOQUEIA",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "block-delete",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "id": "4e081916-5309-45e4-a300-1f7aeaa5244b",
+            "name": "Webhook - WhatsApp Entrada",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 2,
+            "position": [
+                -480,
+                -48
+            ],
+            "webhookId": "webhook-queue-entry"
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "{\n  \"success\": true,\n  \"message\": \"Webhook recebido com sucesso. Processamento em background iniciado!\"\n}",
+                "options": {}
+            },
+            "id": "e1f13a3d-c12e-4b46-88c1-1234abcd5678",
+            "name": "✅ Respond to Webhook",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1.1,
+            "position": [
+                -260,
+                -48
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "SELECT * FROM crm_buyers\nWHERE LEFT(REGEXP_REPLACE(phone_id, '[^0-9]', '', 'g'), 12) = REGEXP_REPLACE($1, '[^0-9]', '', 'g');",
+                "options": {
+                    "queryReplacement": "={{ $json.cleanedPhone }}"
+                }
+            },
+            "id": "2eaf0ea3-a7d3-4d7e-aa02-36ed57d342f5",
+            "name": "[PG] Verificar Blocklist (Etiqueta)",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.2,
+            "position": [
+                200,
+                -48
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "euXFxPfnNiMWJWxz",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "amount": "={{ Math.floor(Math.random() * (4 - 1 + 1)) + 1 }}"
+            },
+            "type": "n8n-nodes-base.wait",
+            "typeVersion": 1.1,
+            "position": [
+                700,
+                -48
+            ],
+            "id": "07046fb1-7cc6-4b5a-bfef-7a5ae2a39610",
+            "name": "[WAIT] Pausa (Etiqueta)",
+            "webhookId": "aab1dc4a-ccfa-5893-9d34-fa5ce227bba3"
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "={{ $('Code - Extrair Dados').first().json.baseUrl }}/chat/block",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Accept",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "token",
+                            "value": "={{ $('Code - Extrair Dados').first().json.token }}"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "number",
+                            "value": "={{ $('Code - Extrair Dados').first().json.cleanedPhone }}"
+                        },
+                        {
+                            "name": "block",
+                            "value": "true"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "1b53d1e4-734a-4c57-acde-4112ac2d1fa2",
+            "name": "UAZAPI - Bloquear (Etiqueta)",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                920,
+                -48
+            ],
+            "retryOnFail": true,
+            "maxTries": 5
+        },
+        {
+            "parameters": {
+                "content": "## WORKFL  VERIFICADOR JÁ PAGOU? BLOQUEIA & APAGA CONTATO:\n\n*Foi adicionado o Node de Respond to Webhook para corrigir o erro de Timeout (Response Node Missing).*",
+                "height": 100,
+                "width": 2016,
+                "color": 3
+            },
+            "type": "n8n-nodes-base.stickyNote",
+            "position": [
+                -576,
+                -224
+            ],
+            "typeVersion": 1,
+            "id": "d8c4d4f9-c30b-45e6-87cc-8c87c67789ee",
+            "name": "Sticky Note"
+        },
+        {
+            "parameters": {
+                "content": "",
+                "height": 320,
+                "width": 2016,
+                "color": 7
+            },
+            "type": "n8n-nodes-base.stickyNote",
+            "position": [
+                -576,
+                -144
+            ],
+            "typeVersion": 1,
+            "id": "cad5c009-4bd7-4755-b549-f29ef0701cdb",
+            "name": "Sticky Note1"
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict",
+                        "version": 1
+                    },
+                    "conditions": [
+                        {
+                            "id": "bloq-etq-001",
+                            "leftValue": "={{ $json.name }}",
+                            "rightValue": "",
+                            "operator": {
+                                "type": "string",
+                                "operation": "exists",
+                                "singleValue": true
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                },
+                "options": {}
+            },
+            "id": "d417111f-3275-49a0-8388-e79c0e054eeb",
+            "name": "IF - Bloqueado?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
+            "position": [
+                440,
+                -48
+            ]
+        },
+        {
+            "parameters": {
+                "amount": "={{ Math.floor(Math.random() * (4 - 1 + 1)) + 1 }}"
+            },
+            "type": "n8n-nodes-base.wait",
+            "typeVersion": 1.1,
+            "position": [
+                1140,
+                -48
+            ],
+            "id": "abc64ef0-e3a3-46de-ab5e-45383192e3d5",
+            "name": "[WAIT] Pausa (Etiqueta)1",
+            "webhookId": "aab1dc4a-ccfa-5893-9d34-fa5ce227bba3"
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "={{ $('Code - Extrair Dados').first().json.baseUrl }}/chat/delete",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Accept",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "token",
+                            "value": "={{ $('Code - Extrair Dados').first().json.token }}"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "number",
+                            "value": "={{ $('Code - Extrair Dados').first().json.cleanedPhone }}"
+                        },
+                        {
+                            "name": "deleteChatDB",
+                            "value": "true"
+                        },
+                        {
+                            "name": "deleteMessagesDB",
+                            "value": "true"
+                        },
+                        {
+                            "name": "deleteChatWhatsApp",
+                            "value": "true"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "be765129-8ec1-42c6-b562-82771f891d51",
+            "name": "UAZAPI - Apagar (Etiqueta)",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                1360,
+                -48
+            ],
+            "retryOnFail": true,
+            "maxTries": 5
+        },
+        {
+            "parameters": {
+                "jsCode": "// Função para limpar o número de telefone\nconst cleanPhoneNumber = (phone) => {\n  if (!phone) return null;\n  let cleanedPhone = phone.toString().replace(/@s\\.whatsapp\\.net/g, '').replace(/[^\\d]/g, '');\n  if (cleanedPhone.length === 11 && !cleanedPhone.startsWith('55')) cleanedPhone = '55' + cleanedPhone;\n  return cleanedPhone.slice(0, 12);\n};\n\n// SMART EXTRACTION (FALLBACKS)\nconst body = $json.body;\nconst chat = body.chat || {};\nconst message = body.message || {};\n\n// Telefone\nconst rawPhone = message.sender_pn || message.chatid || chat.wa_chatid || chat.phone || chat.id;\nconst cleanedPhone = cleanPhoneNumber(rawPhone);\n\n// Nome\nconst name = message.senderName || chat.wa_name || chat.name || 'Lead Novo';\n\n// AD TRACKING (CTWA)\nconst adData = {\n  clid: message.content?.externalAdReply?.ctwaClid || null,\n  source: message.content?.contextInfo?.entryPointConversionSource || null,\n  adId: message.content?.externalAdReply?.sourceID || null\n};\n\nreturn {\n  baseUrl: body.BaseUrl || \"\",\n  token: body.token || \"\",\n  instanceName: body.instanceName || \"unknown\",\n  cleanedPhone,\n  name,\n  adData\n};"
+            },
+            "id": "30c440e5-07db-4e7b-8ebe-80cb76d64d94",
+            "name": "Code - Extrair Dados",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                -40,
+                -48
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook - WhatsApp Entrada": {
+            "main": [
+                [
+                    {
+                        "node": "✅ Respond to Webhook",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "✅ Respond to Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Code - Extrair Dados",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[PG] Verificar Blocklist (Etiqueta)": {
+            "main": [
+                [
+                    {
+                        "node": "IF - Bloqueado?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[WAIT] Pausa (Etiqueta)": {
+            "main": [
+                [
+                    {
+                        "node": "UAZAPI - Bloquear (Etiqueta)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "UAZAPI - Bloquear (Etiqueta)": {
+            "main": [
+                [
+                    {
+                        "node": "[WAIT] Pausa (Etiqueta)1",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "IF - Bloqueado?": {
+            "main": [
+                [
+                    {
+                        "node": "[WAIT] Pausa (Etiqueta)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                []
+            ]
+        },
+        "[WAIT] Pausa (Etiqueta)1": {
+            "main": [
+                [
+                    {
+                        "node": "UAZAPI - Apagar (Etiqueta)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Code - Extrair Dados": {
+            "main": [
+                [
+                    {
+                        "node": "[PG] Verificar Blocklist (Etiqueta)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "pinData": {},
+    "settings": {
+        "executionOrder": "v1"
+    }
+}

@@ -1,0 +1,265 @@
+# 🚀 Guia de Performance: VPS & n8n Refatorado
+
+Este guia resolve os gargalos de performance e erros de loop no seu sistema de atendimento.
+
+---
+
+## 🏗️ 1. Arquitetura DigitalOcean ($200 Créditos)
+
+Para rodar como a Zapdata, você precisa de **separação de recursos**. Não coloque tudo em uma única VPS de $6, pois o n8n e o Postgres vão brigar por RAM.
+
+### **Servidor A: O Motor (n8n + Banco de Dados)**
+*   **Plano**: Droplet Premium Intel (NVMe SSD).
+*   **Configuração**: **8GB RAM / 4 vCPUs** ($48/mês).
+*   **Por que?**: O processamento de 3.000+ leads consome muita CPU no n8n. O Postgres precisa de IOPS alto (NVMe) para não travar nas inserções em massa.
+*   **Instalação**: Use **Docker + Docker-compose**. É mais fácil de migrar e gerenciar.
+    *   *Container 1*: n8n
+    *   *Container 2*: Postgres 15+
+    *   *Container 3*: Redis (para fila do n8n)
+
+### **Servidor B: O Painel (Frontend PHP + API)**
+*   **Plano**: Droplet Regular SSD.
+*   **Configuração**: **4GB RAM / 2 vCPUs** ($24/mês).
+*   **Por que?**: O CloudPanel roda liso aqui. Serve para o seu Dashboard PHP e a API de consulta.
+*   **Instalação**: CloudPanel (Nginx + PHP 8.2).
+
+---
+
+## 🔄 2. Workflow n8n Corrigido (JSON)
+
+**Principais correções realizadas:**
+1.  **Avanço de Batch**: O retorno do "Loop 2" agora vai para a entrada do "Loop 1" para trocar de instância.
+2.  **Referência Relativa**: Removemos o `$('Node').first()` que travava na primeira instância. Agora o código usa o item atual do loop.
+3.  **Performance**: Batch size do Loop 2 aumentado de 1 para **50** (processa 50 leads por vez antes de salvar no banco, muito mais rápido).
+
+### **Como Importar:**
+1. Copie o JSON abaixo.
+2. No n8n, clique em `Import from JSON`.
+
+```json
+{
+  "nodes": [
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "82aa9089-ab03-4efd-8a2b-0dd00ee7bcb7",
+      "name": "Loop 1 - Instâncias",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [920, 832]
+    },
+    {
+      "parameters": {
+        "url": "={{ $node[\"Config Global\"].json.server_url }}/labels",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $json.token }}"
+            }
+          ]
+        }
+      },
+      "id": "11904c47-f7d6-40e6-b380-be36d63b5391",
+      "name": "[HTTP] Get Labels",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1140, 970]
+    },
+    {
+      "parameters": {
+        "jsCode": "const labels = $input.all().map(item => item.json);\nconst filterLabel = (name, search) => (name || '').toUpperCase().includes(search);\n\nconst pagoMeta = labels.filter(l => filterLabel(l.name, 'PAGO'));\nconst pendenteMeta = labels.filter(l => filterLabel(l.name, 'PENDENTE'));\n\nreturn [{\n  json: {\n    ...$node[\"Loop 1 - Instâncias\"].json,\n    pago_ids: pagoMeta.map(l => String(l.labelid || l.id || '').split(':').pop()),\n    pago_names: pagoMeta.map(l => (l.name || '').toUpperCase()),\n    pendente_ids: pendenteMeta.map(l => String(l.labelid || l.id || '').split(':').pop()),\n    pendente_names: pendenteMeta.map(l => (l.name || '').toUpperCase())\n  }\n}];"
+      },
+      "id": "bfa6ac5c-6549-4019-a7b9-7cda4d6b8ff7",
+      "name": "Code - Mapear IDs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 970]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $node[\"Config Global\"].json.server_url }}/chat/find",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"operator\": \"AND\", \"sort\": \"-wa_lastMsgTimestamp\", \"limit\": 5000, \"wa_isGroup\": false}"
+      },
+      "id": "ae79d61a-b3de-4a12-a3f7-f586a0e82cf9",
+      "name": "[HTTP] Busca Chats",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1540, 970]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "chats",
+        "options": {}
+      },
+      "id": "0f385057-82fd-441c-95e4-b2cda028bfbb",
+      "name": "Separar Chats",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [1740, 970]
+    },
+    {
+      "parameters": {
+        "batchSize": 50,
+        "options": {}
+      },
+      "id": "9923df33-824b-4e14-bbdd-c31ee003c619",
+      "name": "Loop 2 - Leads",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [1940, 970]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ (() => {\n    const meta = $node[\"Code - Mapear IDs\"].json;\n    const chatLabelsRaw = $json.wa_label || [];\n    const chatLabelsNormalized = chatLabelsRaw.map(l => {\n        const val = typeof l === 'object' ? (l.id || l.name || '') : String(l);\n        return val.split(':').pop().toUpperCase();\n    });\n    const hasPendente = chatLabelsNormalized.some(l => meta.pendente_ids.includes(l) || meta.pendente_names.some(name => name.includes(l)));\n    const hasPago = chatLabelsNormalized.some(l => meta.pago_ids.includes(l) || meta.pago_names.some(name => name.includes(l)));\n    return hasPendente && !hasPago;\n})() }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "6d2d2702-0775-4514-96dd-337155026cf2",
+      "name": "IF - Só Pendente?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2140, 970]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO remarketing_pendentes (instance_name, phone, name)\r\nVALUES ($1, $2, $3)\r\nON CONFLICT (instance_name, phone) \r\nDO UPDATE SET last_interaction = NOW();",
+        "options": {
+          "queryReplacement": "={{ [$node[\"Loop 1 - Instâncias\"].json.name, ($json.wa_chatid || $json.owner || \"\").split('@')[0], ($json.name || $json.lead_name || 'Lead')] }}"
+        }
+      },
+      "id": "844e1ad8-b447-432e-aa9f-c6206a9845e1",
+      "name": "[PG] Salva Pendente",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [2340, 880]
+    }
+  ],
+  "connections": {
+    "Loop 1 - Instâncias": {
+      "main": [
+        [],
+        [
+          {
+            "node": "[HTTP] Get Labels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[HTTP] Get Labels": {
+      "main": [
+        [
+          {
+            "node": "Code - Mapear IDs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Mapear IDs": {
+      "main": [
+        [
+          {
+            "node": "[HTTP] Busca Chats",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[HTTP] Busca Chats": {
+      "main": [
+        [
+          {
+            "node": "Separar Chats",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Separar Chats": {
+      "main": [
+        [
+          {
+            "node": "Loop 2 - Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop 2 - Leads": {
+      "main": [
+        [
+          {
+            "node": "Loop 1 - Instâncias",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IF - Só Pendente?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF - Só Pendente?": {
+      "main": [
+        [
+          {
+            "node": "[PG] Salva Pendente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop 2 - Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[PG] Salva Pendente": {
+      "main": [
+        [
+          {
+            "node": "Loop 2 - Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
+```

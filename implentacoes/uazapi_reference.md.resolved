@@ -1,0 +1,75 @@
+## 1. Administração & Gestão em Massa (Internal)
+Estes endpoints requerem o cabeçalho `admintoken` e são essenciais para gerir múltiplas instâncias.
+- `GET /instance/all`: Listar todas as instâncias do servidor com status detalhado.
+- `POST /instance/init`: Criar instância. Campos chave:
+    - `adminField01`, `adminField02`: Metadados customizados para sync com DB (ex: User ID).
+    - `systemName`: Nome da organização/sistema.
+- `POST /instance/updateAdminFields`: Atualizar metadados administrativos sem reiniciar.
+- `POST /admin/webhook`: Definir um Webhook Global para todos os eventos do servidor.
+
+## 2. Instância (Conexão, Status & Configurações)
+- `GET /instance/connect`: Obter QR Code ou Pairing Code para conexão.
+- `GET /instance/info`: Status atual (CONNECTED/DISCONNECTED).
+- `POST /instance/logout`: Desconectar o WhatsApp da instância.
+- `POST /instance/settings`: Configurar privacidade (foto de perfil, lido, visto por último).
+- `POST /webhook`: Configurar Webhook específico da instância.
+    - Payload: `{ "enabled": true, "url": "URL", "events": ["messages", "connection"], "excludeMessages": ["wasSentByApi"] }`
+- `POST /instance/privacy`: Controle fino de `readReceipts`, `lastSeen` e `profilePicture`.
+- `POST /instance/presence`: Alterar presença (`composing`, `recording`, `available`).
+
+## 3. Envio de Mensagens
+Suporte completo a mídias ricas e metadados.
+- `POST /sender/text`: Enviar texto simples. Suporta link previews e delay.
+- `POST /sender/image`: Enviar imagem (URL ou Base64).
+- `POST /sender/video`: Enviar vídeo (MP4).
+- `POST /sender/document`: Enviar PDFs/Docs carregados.
+- `POST /sender/audio`: Enviar áudio (mp3/ogg).
+- `POST /sender/ptt`: Enviar mensagem de voz (Push-to-Talk).
+- `POST /sender/sticker`: Enviar figurinhas (WebP).
+- `POST /sender/location`: Enviar coordenadas geográficas.
+- `POST /sender/vcard`: Enviar cartões de contato.
+
+### Interatividade Avançada
+- `POST /send/menu`: Enviar botões, listas, enquetes e carrosséis.
+- `POST /sender/reaction`: Enviar reações (emojis) a mensagens específicas.
+
+## 4. Chats & CRM (Gestão de Leads)
+A UAZAPI possui um CRM nativo potente pronto para integração com dashboard.
+- `POST /chat/find`: Buscar conversas com filtros de etiquetas, datas e status.
+- `POST /chat/editLead`: Editar dados do lead. Suporta:
+    - `name`, `email`, `notes`.
+    - **20 campos customizados**: `lead_field01` até `lead_field20`.
+    - `labels`: Array de etiquetas.
+- `GET /chat/getLead`: Recuperar informações completas de um contato.
+- `POST /chat/labels`: Vincular/Desvincular etiquetas a um chat.
+- `GET /labels`: Listar todas as etiquetas disponíveis.
+- `POST /chat/read`: Marcar chat como lido/não lido manualmente.
+- `POST /update-business-profile`: Atualizar perfil comercial (Email, Descrição, Categoria).
+
+### Placeholders Dinâmicos
+Em fluxos de automação, use:
+- `{{name}}`: Nome completo.
+- `{{first_name}}`: Primeiro nome.
+- `{{lead_email}}`: E-mail do lead.
+- `{{custom_01}}`: Valor do campo customizado 1.
+
+## 5. Grupos e Comunidades
+Controle total sobre grupos.
+- `POST /group/create`: Criar novo grupo.
+- `POST /group/updateParticipants`: Adicionar, remover ou promover membros.
+- `GET /group/inviteCode`: Gerar link de convite.
+- `POST /group/community`: Gerir estruturas de comunidade do WhatsApp.
+
+## 6. Chatbot & IA
+Integração nativa com modelos de linguagem.
+- `POST /chatbot/trigger`: Disparar um fluxo específico para um contato.
+- `POST /ai/knowledge`: Gerenciar base de conhecimento vetorial para respostas inteligentes.
+- **Modelos Suportados**: OpenAI, Gemini (Google), Anthropic (Claude), DeepSeek.
+
+## 7. Webhooks & SSE
+- **Webhooks**: Notificações POST para mensagens recebidas, envio de status de mensagem (lido/recebido) e conexão.
+- **SSE (Server-Sent Events)**: Fluxo de eventos em tempo real para o frontend.
+    - Endpoints SSE permitem atualizar o dashboard (status de conexão, novas mensagens) instantaneamente sem polling.
+
+---
+**Nota**: Todas as requisições requerem o cabeçalho `admintoken` para administração ou `token` para endpoints de instância.
